@@ -1,0 +1,24 @@
+- name: Configure ports.conf
+  template: src=ports.j2 dest=/etc/cumulus/ports.conf
+  when: node.{{inventory_hostname}}.ports is defined
+  tags:
+    - ports_setup
+    - initial_setup
+
+- name: create config folder locally
+  file: path=config/{{ ansible_hostname }} state=directory recurse=yes
+  delegate_to: localhost
+  tags:
+    - interface_setup
+    - local
+  when: global.save_local is defined and global.save_local == "enable"
+
+
+- name: create rendered flat-file /etc/cumulus/ports.conf locally
+  template: src=ports.j2  dest=config/{{ ansible_hostname }}/ports.conf
+  delegate_to: localhost
+  tags:
+    - local
+    - ports_setup
+  when: global.save_local is defined and global.save_local == "enable"
+

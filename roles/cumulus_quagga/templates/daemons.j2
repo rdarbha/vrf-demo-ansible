@@ -1,0 +1,28 @@
+{% set node = node[ansible_hostname] %}
+## Ansible managed file
+
+zebra=yes
+{% if node.BGP is defined -%}
+bgpd=yes
+{% else %}
+bgpd=no
+{% endif %}
+{% if node.OSPF is defined -%}
+ospfd=yes
+ospf6d=yes
+{% else %}
+ospfd=no
+ospf6d=no
+{% endif %}
+{% if node.RIP is defined -%}
+ripd=yes
+ripngd=yes
+{% else %}
+ripd=no
+ripngd=no
+{% endif %}
+{% if node.ISIS is defined -%}
+isisd=yes
+{% else %}
+isisd=no
+{% endif %}

@@ -1,0 +1,193 @@
+#Setup the switch time zone (Note this will always report changed if re-run after the dpkg-reconfigure)
+- name: Set time zone /etc/timezone
+  copy: content={{global.ntp.timezone}} dest=/etc/timezone
+  when: global.ntp.timezone is defined
+  notify: 
+    - update timezone
+  tags:
+    - time_setup
+    - ntp_setup
+    - initial_setup
+
+- name: Setup NTP
+  template: src=ntp.j2 dest=/etc/ntp.conf
+  when: global.ntp is defined
+  notify: 
+    - restart NTP
+    - Verify NTP
+  tags:
+    - time_setup
+    - ntp_setup
+    - initial_setup
+
+- name: create config folder locally
+  file: path=config/{{ ansible_hostname }} state=directory recurse=yes
+  delegate_to: localhost
+  tags:
+    - interface_setup
+    - local
+  when: global.save_local is defined and global.save_local == "enable"
+
+- name: create rendered flat-file /etc/ntp.conf locally
+  template: src=ntp.j2  dest=config/{{ ansible_hostname }}/ntp.conf
+  delegate_to: localhost
+  tags:
+    - local
+    - ntp_setup
+  when: global.save_local is defined and global.save_local == "enable"
+
+- name: Create proxy files if needed
+  copy:
+    content: ""
+    dest: "{{item.dest}}"
+    force: no
+    group: root
+    owner: root
+    mode: "{{item.mode}}"
+  with_items:
+    - { dest: '/etc/profile.d/proxy.sh', mode: "0755" }
+    - { dest: '/etc/apt/apt.conf.d/90apt-proxy', mode: "0644" }
+  when: global.http_proxy is defined
+
+- name: Setup HTTP proxy
+  #lineinfile: dest=/etc/wgetrc line="{{http_proxy}}"
+  #lineinfile: dest={{item.dest}} line="{{item.proxy}}" create=yes
+  blockinfile:
+    dest: "{{item.dest}}"
+    marker: "##{mark} -- HTTP Proxy Ansible -- ##"
+    block: |
+      {{item.proxy}}
+  with_items:
+    - { dest: '/etc/wgetrc', proxy: "http_proxy = {{global.http_proxy}}" }
+    - { dest: '/etc/profile.d/proxy.sh', proxy: 'export http_proxy={{global.http_proxy}}' }
+    - { dest: '/etc/apt/apt.conf.d/90apt-proxy', proxy: 'Acquire::http::Proxy "{{global.http_proxy}}";' }
+  when: global.http_proxy is defined
+  tags:
+    - proxy_setup
+    - initial_setup
+      
+
+- name: Setup HTTPS proxy
+  blockinfile:
+    dest: "{{item.dest}}"
+    marker: "##{mark} -- HTTPS Proxy Ansible -- ##"
+    block: |
+      {{item.proxy}}
+  with_items:
+    - { dest: '/etc/wgetrc', proxy: "https_proxy = {{global.https_proxy}}" }
+    - { dest: '/etc/profile.d/proxy.sh', proxy: 'export https_proxy={{global.https_proxy}}' }
+    - { dest: '/etc/apt/apt.conf.d/90apt-proxy', proxy: 'Acquire::https::Proxy "{{global.https_proxy}}";' }
+  when: global.https_proxy is defined
+  tags:
+    - proxy_setup
+    - initial_setup
+
+- name: Setup FTP proxy
+  blockinfile:
+    dest: "{{item.dest}}"
+    marker: "##{mark} -- FTP Proxy Ansible -- ##"
+    block: |
+      {{item.proxy}}
+  with_items:
+    - { dest: '/etc/wgetrc', proxy: "ftp_proxy = {{global.ftp_proxy}}" }
+    - { dest: '/etc/profile.d/proxy.sh', proxy: 'export ftp_proxy={{global.ftp_proxy}}' }
+    - { dest: '/etc/apt/apt.conf.d/90apt-proxy', proxy: 'Acquire::ftp::Proxy "{{global.ftp_proxy}}";' }
+  when: global.ftp_proxy is defined
+  tags:
+    - proxy_setup
+    - initial_setup
+
+#This overrides the http proxy in the 90apt-proxy
+- name: Setup APT proxy
+  copy: content='Acquire::http::Proxy "{{global.apt_proxy}}";\n' dest='/etc/apt/apt.conf.d/90apt-proxy'
+  when: global.apt_proxy is defined
+  tags:
+    - apt_proxy_setup
+    - initial_setup
+
+
+#Copy the topology file to the remote switches
+- name: Configure ptmd from remote URL
+  get_url: url={{global.ptm_topology}} dest=/etc/ptm.d/topology.dot
+  when: global.ptm_topology is defined
+  notify:
+    - restart PTM
+    - Check PTM status
+    - Print PTM table
+  tags:
+    - ptm_setup
+    - initial_setup
+
+#Check if roles/cumulus_common/files/topology.dot file is actually defined
+- name: Check if local PTM dot file is created
+  local_action: stat path="topology.dot"
+  register: ptmresult    
+  tags:
+    - ptm_setup
+
+- debug: var=ptmresult
+  tags:
+    - ptm_setup
+
+- name: Configure ptmd from local topology.dot
+  copy: src=topology.dot dest=/etc/ptm.d/topology.dot
+  when: (global.ptm_topology is not defined) and (ptmresult["stat"].exists)
+  notify:
+    - restart PTM
+    - Check PTM status
+    - Print PTM table
+  tags:
+    - ptm_setup
+    - initial_setup
+
+
+#Retrieve the updated package list
+#You can use update_cache=yes on each package install or this single task
+- apt: update_cache=yes cache_valid_time=3600
+  when: global.additional_packages.cumulus_repo is defined
+  tags:
+    - apt_setup
+    - initial_setup
+ 
+- name: Installing additional packages
+  apt: name={{item}}
+  with_items: "{{global.additional_packages.cumulus_repo}}"
+  when: global.additional_packages.cumulus_repo is defined
+  tags:
+    - apt_setup
+    - initial_setup
+ 
+- name: Add Debian jessie repo for additional packages
+  apt_repository: state=present repo={{ item }}
+  with_items:
+    - deb http://ftp.us.debian.org/debian/ jessie main contrib non-free
+    - deb-src http://ftp.us.debian.org/debian/ jessie main contrib non-free
+  when: global.additional_packages.debian_repo is defined
+  tags:
+    - apt_setup
+    - initial_setup
+
+- apt: update_cache=yes cache_valid_time=3600
+  when: global.additional_packages.debian_repo is defined
+  tags:
+    - apt_setup
+    - initial_setup
+ 
+- name: Installing additional packages from Debian Repo
+  apt: name={{item}}
+  with_items: "{{global.additional_packages.debian_repo}}"
+  when: global.additional_packages.debian_repo is defined
+  tags:
+    - apt_setup
+    - initial_setup
+
+#Export all logs to remote syslog server
+- name: Setup remote syslog server
+  copy: 
+    content="*.*                             @{{global.remote_syslog_server}}\n"
+    dest="/etc/rsyslog.d/15-remotesyslog.conf"
+  when: global.remote_syslog_server is defined
+  notify: restart rsyslog
+  tags:
+    - syslog_setup
+    - initial_setup

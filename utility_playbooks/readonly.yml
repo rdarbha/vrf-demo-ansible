@@ -1,0 +1,42 @@
+---
+- hosts: leafs
+  user: cumulus
+  become: yes
+  become_method: sudo
+
+  vars:
+    #The readonly user to create
+    readonlyuser: "visp_usr"
+    #Encrypted password for the readonly user.  Found in /etc/shadow
+    readonly_userpwd: "$6$rfH4mWO4$/oHXVXgETP3B0yKODA6IlTBsuepqKvcn4w7CXvwhtWeW71KXNABIZ5EGhCWqDtR7darGAlQa6Zp1hjmOrxStb1"
+    #Password for connecting to the BGPD process with read access
+    readonly_quaggapwd: "readonly"
+    #Password to switch to enable mode
+    enable_pwd: "admsoimi"
+
+  tasks:
+  - name: Create read-only user account readonly
+    user: name="{{readonlyuser}}" comment="RO access account" shell=/bin/bash password="{{readonly_userpwd}}"
+
+  #Setup password encryption in Quagga and set the vty password and enable password
+  - name: Enable service password encryption
+    shell: "vtysh -c 'conf t' -c 'service password-encryption' -c 'password {{readonly_quaggapwd}}' -c 'enable password {{enable_pwd}}'"
+
+  - name: Create BGP command script on remote host
+    copy:
+      content: |
+        #! /bin/bash
+        { sleep 1; echo {{readonly_quaggapwd}}; sleep 1; echo show $1 $2 $3 $4; sleep 1; } |  telnet localhost bgpd
+      dest: "/home/{{readonlyuser}}/bgp_cmd.sh"
+      owner: "{{readonlyuser}}"
+      group: "{{readonlyuser}}"
+      mode: 0744
+
+  #Setup an alias so if the user types "show ip bgp sum" it auto telnets for them
+  - name: Setup show alias for readonly user
+    blockinfile:
+      dest: /home/{{readonlyuser}}/.bashrc
+      marker: "##{mark} -- Quagga show alias -- ##"
+      block: |
+        alias show=/home/{{readonlyuser}}/bgp_cmd.sh
+

@@ -1,0 +1,821 @@
+#Full vars file with examples
+
+#DC wide global defaults. These can be used across all switches/servers
+global:
+
+    #Save a local copy of all of the templates rendered on the remote switch
+    save_local: "enable"
+
+    ### NTP section specify ntp servers, timezone, interface to update NTP   ###
+    ntp:
+        #List of NTP servers 0.cumulusnetworks.pool.ntp.org iburst ([0-3]defaults)
+        #servers: ["192.168.100.253","192.168.100.254"]
+        #List of time zones: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+        timezone: "America/New_York"
+        #Interface to use eth0(default)
+        listen_int: "eth0" 
+
+    ### Proxy section for HTTP, HTTPS, FTP, APT                             ###
+    ### Not apt_proxy overrides http_proxy for all apt operations           ###
+    #http_proxy: "http://192.168.150.254:8080"
+    #https_proxy: "https://192.168.100.254:8443"
+    #ftp_proxy: "ftp://192.168.100.254:8021"
+    #apt_proxy: "http://192.168.100.254"
+
+
+    ### PTM section specify a URL for the topology.dot file                  ###
+    ### If no URL (default is in roles/common/files/topology.dot)            ###
+    #ptm_topology: "http://192.168.0.254/topology.dot"
+
+
+    ### Additional packages to install on the switches                       ###
+    #Packages to install on all nodes.  Cumulus_repo uses the default repo 
+    #for the release version
+    #debian_repo usues jessie can add a check for 2.5.x devices if needed
+    #additional_packages:
+        #cumulus_repo: ["apache2","vim"]
+        #debian_repo: ["htop"]
+
+    #remote_syslog_server: "192.168.0.254:514"
+
+    #User to create on the box for non sudo access and Quagga readonly access
+    readonly_user: "readonly"
+    #Default vty password: readonly 'mOmF4Kx3/N4Rs'
+    readonly_password: 'mOmF4Kx3/N4Rs'
+
+    #Quagga passwords use Encrypted value
+    #Default enable password: CumulusLinux! 'EI3shB8./Ozus'
+    #enable_password:
+    #Default password is "readonly"
+    #quagga_readonly_password:
+
+    #Default /var/log/quagga/quagga.log
+    #log_file:
+
+    route_maps:
+        LOOPBACK:
+            - "route-map LOOPBACK permit 100"
+            - "match interface lo"
+
+    prefix_lists:
+        global_out_list:
+            - "ip 10 permit 5.6.7.0/24 le 32"
+            - "ip 100 deny any"
+
+
+
+node:
+    leaf01:
+
+        ### Role cumulus_ports ###
+        #Breakout cable config no config or definition leaves the default
+        #Valid values ("10G","40G/4","40G","4x10G","4x25G","2x40G","2x50G")
+        #ports:
+            #swp1:
+            #swp2: "4x10G"
+            #swp3: "2x40G"
+            #swp4: "2x25G"
+            #swp5: "2x50G"
+
+        ### Role cumulus_interfaces ###
+        #Interface specific configurations for L1/L2/L3 paramenters
+        interfaces:
+            loopback:
+                ipv4: "10.0.0.11/32"
+
+            eth0:
+                #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
+                vrfmgmt: "enable"
+                dhcp: "enable"
+
+            #swp51:
+                #ipv4: "10.0.100.11/24"
+                #vrf: "red"
+
+            #swp1:
+                #L1 properties
+                #speed: "1000"
+                #duplex: "1000"
+                #autoneg: "off"
+                #Configure interface for DHCP (default "disable")
+                #dhcp: "enable"
+                #mtu: "9216"
+                #L2 properties
+                #Specify vids list to overwrite global list defined in VLANS section
+                #vids: "10 20 30 40 50"
+                #Specify native VLAN to overwrite global list defined in VLANS section
+                #pvid: "1"
+                #Set port to access mode overwrite the global trunk list in VLANS section
+                #bridge_access: "10"
+                #stp_port_cost: "10"
+                #bpdugaurd: "enable" #disable(default)
+                #adminedge: "enable" #disable(default)
+                #Set the interface MAC address manually
+                #hwaddress: "44:39:39:FF:00:FF"
+                #L3 properties IPv4 and IPv6
+                #ipv4: "10.0.100.11/24"
+                #ipv6: "2001::11/64"
+                #Interface description shows in netshow interface
+                #alias: "Test Interface"
+                #Set interface member of VRF
+                #vrf: "blue"
+                #VRR config only one instance supported per interface no lists
+                #vrr_ipv4: "10.0.100.1/24"
+                #vrr_ipv6: "2001::1/64"
+                #vrr_mac: "44:39:39:FF:00:11"
+                #Post statements
+                #post_up: 
+                #    - "ip addr add 9.9.9.11/24 dev swp1"
+                #post_down: 
+                #    - "ip addr del 9.9.9.11/24 dev swp1"
+
+
+        ### Role cumulus_interfaces ###
+        bonds:
+            server01:
+                #dhcp: "enable"
+                #vids: "10 20 30 40 50"
+                #pvid: "1"
+                #bridge_access: "10"
+                #stp_priority: "10"
+                mstpctl-portadminedge: "enable"
+                bpdugaurd: "enable"
+                alias: "Server01 MLAG"
+                #hwaddress: "44:39:39:FF:00:FF"
+                #L3 properties IPv4 and IPv6 addressing
+                #ipv4: "10.0.100.11/24"
+                #ipv6: "2001::11/64"
+                #VRR config only one instance supported per interface no lists
+                #vrr_ipv4: "10.0.100.1/24"
+                #vrr_ipv6: "2001::1/64"
+                #vrr_mac: "44:39:39:FF:00:11"
+                #Post statements
+                #post_up: ["ip addr add 9.9.9.11/24 dev swp1"]
+                #post_down: ["ip addr del 9.9.9.11/24 dev swp1"]
+                #Interfaces tied to this bond
+                members: ["swp1"]
+                #Bond ID for MLAG must match ID on peer switch to form a MLAG bond
+                clagid: 1
+                mtu: 9216
+                #Set LACP rate valid values "fast"(default), "slow"
+                LACP_rate: "fast"
+                #LACP bypass valid values "disable"(default), "enable"
+                LACP_bypass: "enable"
+
+            server02:
+                mstpctl-portadminedge: "enable"
+                bpdugaurd: "enable"
+                alias: "Server02 MLAG"
+                members: ["swp2"]
+                clagid: 2
+                mtu: 9216
+                LACP_bypass: "enable"
+
+        ### Role cumulus_interfaces ###
+        #Bridge section assumes VLAN aware Linux bridge.  vids=VLANs pvid=native VLAN
+        VLANS:
+            default_vids: "10 20 30 40 50 100-110"
+            default_pvid: "1"
+            STP_priority: "8192"
+            #Ageing time for learned MACs 300s(default), really why are you changing this?
+            #mstpctl-ageing: "300"
+            #List of L2 ports on the switch, ports will default to L2 trunks in this list
+            #unless a default_vids list or bridge_access is configured under the interface
+            members: ["server01","server02","regex vni.*"]
+
+        ### Role cumulus_interfaces ###
+        #SVI:
+            #VLAN10:
+                #ipv4: "192.168.10.3/24"
+                #alias: "VM 10 Network"
+                #vrr_ipv4: "192.168.10.1/24"
+                #vrr_mac: "44:39:39:FF:00:10"
+            #VLAN20:
+                #ipv4: "192.168.20.3/24"
+                #alias: "VM 20 Network"
+                #vrr_ipv4: "192.168.20.1/24"
+                #vrr_mac: "44:39:39:FF:00:20"
+
+
+
+        ### Role cumulus_interfaces ###
+        MLAG:
+            peerlink_name: "peerlink"
+            peerlink_sub_int: "4094"
+            members: ["swp49","swp50"]
+            sysmac: "44:39:39:FF:40:94"
+            mtu: 9216
+            peerlink_ip: "169.254.255.1"
+            peerlink_peer_ip: "169.254.255.2"
+            #Using ansible facts to get the ipv4 address of eth0 on the peer listed 
+            backup_peer: "leaf02"
+            description: "Leaf01-Leaf02 MLAG peerlink"
+
+        ### Role cumulus_lnv ###
+        LNV:
+            registration_node:
+                svcnode: "10.0.0.100"
+                vxlan_anycast_ip: "10.0.0.112"
+
+        ### Role cumulus_interfaces ###
+        VXLAN:
+            #If using LNV you can just drop the list of VLANs and the remote tunnel
+            #destinations and sources will be automatically discovered/set
+            #Interfaces will be created in the format vni-10[vlan]
+            #You will want to add these to the bridge can add member "regex vni.*"
+            LNV_VNI_list: ["10","20","30","40","50"]
+            #If using LNV you do not need any of the following
+            #VNIs:
+                #VXLAN ID will be the numbers following VNI
+                #VNI100:
+                    #vxlan-remoteip: "10.0.0.13"
+                    #alias: "Customer X"
+
+        VRF:
+            red:
+                #Add ipv4 and ipv6 loopback IP addresses to the VRF
+                ipv4: "10.0.0.71/32"
+                ipv6: "2001::71/128"
+                #specify a table ID number 1001-1255 (DEFAULT auto)
+                #you should probably just use the default
+                #table: 1002
+            blue:
+            green:
+
+
+        ### Role cumulus_quagga ###
+        BGP:
+            asn: 64601
+            #Redistribute connected routes default is all or specify route-map name
+            redistribute_connected_ipv4: "LOOPBACK"
+            #ipv4_networks: ["192.168.10.0/24"]
+            #ipv6_networks: ["2600:1010::0/64"]
+
+            peer_groups:
+                #Fabric connections are BGP unnumbered spine-leaf connections or ROH
+                fabric:
+                    interfaces: ["swp51","swp52"]
+
+                #Reserved peergroup name, list of eBGP connections default to dual stack
+                #general_peers:
+                    #Represent this ASN to peers in this peergroup
+                    #local_as: "394670"
+                    #The remote ASN for this peergroup  Valid values are:
+                    #number (0-4294967295, "external"(default), or "internal"
+                    #remote_as: "external"
+                    #list of peers to add to the peergroup, can also put interfaces
+                    #peers: ["1.2.3.4","1.2.3.5"]
+                    #prefix_list_in: "external_in"
+                    #prefix_list_out: "rack_networks"
+                    #route_map_in: "rmap_in"
+                    #route_map_out: "rmap_out"
+                    #description: "Test networks"
+                    #To activate a peergroup for IPv4 and/or IPv6 advertisements
+                    #address_family_ipv4: "enable"
+                    #address_family_ipv6: "enable"
+                    #Set the maximum number of routes learned valid (1-4294967295)
+                    #maximum_prefix: "64000"
+                    #Remove private ASN from AS path Valid values:
+                    # "all" (default)  strip all private ASN 
+                    # "replace-as" replace with local ASN, preserves path length
+                    #remove_private_AS: "all"
+                    #Allow soft resets using stored BGP updates from peers
+                    #Cumulus supports dynamic route refresh so this is only needed
+                    #for legacy or interop Also do not use for large route tables 
+                    #with huge numbers of peers
+                    #soft_reconfiguration: "enable"
+                    #Set a password for the peergroup for basic authentication
+                    #password: "presharedpass"
+
+        #Add static routes in a list
+        #static_routes:
+        #  - "ip route 0.0.0.0/0 208.40.90.1"
+
+        #Route maps specific to this host
+        #route_maps:
+           #exit02_rm:
+               #- "10 match ip address 1.1.1.1/32"
+               #- "10 set as-path prepend 64512"
+               #- "20 match ip address 1.1.1.1/32"
+               #- "20 set as-path prepend 64512"
+
+        #Specify a prefix list that overrides the global prefix-list if the same name
+        #prefix_lists:
+            #global_out_list:
+                #- "ip 50 permit 5.6.7.0/8 le 32"
+                #- "ip 100 deny any"
+
+
+    leaf02:
+        interfaces:
+            loopback:
+                ipv4: "10.0.0.12/32"
+
+            eth0:
+                vrfmgmt: "enable"
+                dhcp: "enable"
+
+        bonds:
+            server01:
+                mstpctl-portadminedge: "enable"
+                bpdugaurd: "enable"
+                alias: "Server01 MLAG"
+                members: ["swp1"]
+                clagid: 1
+                mtu: 9216
+                LACP_bypass: "enable"
+
+            server02:
+                mstpctl-portadminedge: "enable"
+                bpdugaurd: "enable"
+                alias: "Server02 MLAG"
+                members: ["swp2"]
+                clagid: 2
+                mtu: 9216
+                LACP_bypass: "enable"
+
+        VLANS:
+            default_vids: "10 20 30 40 50 100-110"
+            default_pvid: "1"
+            STP_priority: "8192"
+            members: ["server01","server02","regex vni.*"]
+
+        MLAG:
+            peerlink_name: "peerlink"
+            peerlink_sub_int: "4094"
+            members: ["swp49","swp50"]
+            sysmac: "44:39:39:FF:40:94"
+            peerlink_ip: "169.254.255.2"
+            mtu: 9216
+            peerlink_peer_ip: "169.254.255.1"
+            backup_peer: "leaf01"
+            description: "Leaf01-Leaf02 MLAG peerlink"
+
+        ### Role cumulus_lnv ###
+        LNV:
+            registration_node:
+                svcnode: "10.0.0.100"
+                vxlan_anycast_ip: "10.0.0.112"
+
+       ### Role cumulus_interfaces ###
+        VXLAN:
+            LNV_VNI_list: ["10","20","30","40","50"]
+
+
+        BGP:
+            asn: 64602
+            #Redistribute connected routes default is all or specify route-map name
+            redistribute_connected_ipv4: "LOOPBACK"
+            peer_groups:
+                fabric:
+                    interfaces: ["swp51","swp52"]
+
+
+    leaf03:
+        interfaces:
+            loopback:
+                ipv4: "10.0.0.13/32"
+
+        bonds:
+            server03:
+                mstpctl-portadminedge: "enable"
+                bpdugaurd: "enable"
+                alias: "Server01 MLAG"
+                members: ["swp1"]
+                clagid: 3
+                mtu: 9216
+                LACP_bypass: "enable"
+
+            server04:
+                mstpctl-portadminedge: "enable"
+                bpdugaurd: "enable"
+                alias: "Server02 MLAG"
+                members: ["swp2"]
+                clagid: 4
+                mtu: 9216
+                LACP_bypass: "enable"
+
+        VLANS:
+            default_vids: "10 20 30 40 50 100-110"
+            default_pvid: "1"
+            STP_priority: "8192"
+            members: ["server03","server04","regex vni.*"]
+
+        MLAG:
+            peerlink_name: "peerlink"
+            peerlink_sub_int: "4094"
+            members: ["swp49","swp50"]
+            sysmac: "44:39:39:FF:40:95"
+            mtu: 9216
+            peerlink_ip: "169.254.255.1"
+            peerlink_peer_ip: "169.254.255.2"
+            backup_peer: "leaf04"
+            description: "Leaf03-Leaf04 MLAG peerlink"
+
+        ### Role cumulus_lnv ###
+        LNV:
+            registration_node:
+                svcnode: "10.0.0.100"
+                vxlan_anycast_ip: "10.0.0.134"
+
+       ### Role cumulus_interfaces ###
+        VXLAN:
+            LNV_VNI_list: ["10","20","30","40","50"]
+
+        BGP:
+            asn: 64603
+            #Redistribute connected routes default is all or specify route-map name
+            redistribute_connected_ipv4: "LOOPBACK"
+            peer_groups:
+                fabric:
+                    interfaces: ["swp51","swp52"]
+
+    leaf04:
+        interfaces:
+            loopback:
+                ipv4: "10.0.0.14/32"
+
+        bonds:
+            server03:
+                mstpctl-portadminedge: "enable"
+                bpdugaurd: "enable"
+                alias: "Server01 MLAG"
+                members: ["swp1"]
+                clagid: 3
+                mtu: 9216
+                LACP_bypass: "enable"
+
+            server04:
+                mstpctl-portadminedge: "enable"
+                bpdugaurd: "enable"
+                alias: "Server02 MLAG"
+                members: ["swp2"]
+                clagid: 4
+                mtu: 9216
+                LACP_bypass: "enable"
+
+        VLANS:
+            default_vids: "10 20 30 40 50 100-110"
+            default_pvid: "1"
+            STP_priority: "8192"
+            members: ["server03","server04","regex vni.*"]
+
+        MLAG:
+            peerlink_name: "peerlink"
+            peerlink_sub_int: "4094"
+            members: ["swp49","swp50"]
+            sysmac: "44:39:39:FF:40:95"
+            mtu: 9216
+            peerlink_ip: "169.254.255.2"
+            peerlink_peer_ip: "169.254.255.1"
+            backup_peer: "leaf03"
+            description: "Leaf03-Leaf04 MLAG peerlink"
+
+        ### Role cumulus_lnv ###
+        LNV:
+            registration_node:
+                svcnode: "10.0.0.100"
+                vxlan_anycast_ip: "10.0.0.134"
+
+       ### Role cumulus_interfaces ###
+        VXLAN:
+            LNV_VNI_list: ["10","20","30","40","50"]
+
+        BGP:
+            asn: 64604
+            #Redistribute connected routes default is all or specify route-map name
+            redistribute_connected_ipv4: "LOOPBACK"
+            peer_groups:
+                fabric:
+                    interfaces: ["swp51","swp52"]
+
+
+    exit01:
+        interfaces:
+        #All L3 interfaces go in this section
+            loopback:
+                ipv4: "10.0.0.15/32"
+            swp44:
+                ipv4: "10.50.1.2/30"
+                alias: "Internet BGP connection"
+
+        bonds:
+            edge01:
+                members: ["swp1"]
+                clagid: 1
+                mtu: 9216
+
+        VLANS:
+            default_vids: "10 20 30 40 50 100-110"
+            default_pvid: "1"
+            STP_priority: "8192"
+            members: ["edge01","regex vni.*"]
+        #MLAG:
+        #    peerlink_name: "peerlink"
+        #    peerlink_sub_int: "4092"
+        #    members: ["swp49","swp50"]
+        #    sysmac: "44:39:39:FF:40:92"
+        #    mtu: 9216
+        #    peerlink_ip: "169.254.255.1"
+        #    peerlink_peer_ip: "169.254.255.2"
+        #    backup_peer: "exit02"
+        #    description: "exit01-exit02 MLAG peerlink"
+
+        ### Role cumulus_lnv ###
+        LNV:
+            registration_node:
+                svcnode: "10.0.0.100"
+                vxlan_anycast_ip: "10.0.0.156"
+
+       ### Role cumulus_interfaces ###
+        VXLAN:
+            LNV_VNI_list: ["10","20","30","40","50"]
+
+        #BGP:
+        #    asn: 64701
+            #Redistribute connected routes default is all or specify route-map name
+        #    redistribute_connected_ipv4: "LOOPBACK"
+        #    peer_groups:
+        #        fabric:
+        #            interfaces: ["swp51","swp52"]
+
+        #        internet_peers:
+        #            remote_as: "external"
+        #            peers: ["10.50.1.1"]
+        #            prefix_list_in: "external_in"
+        #            prefix_list_out: "rack_networks"
+        #            description: "Internet networks"
+        #            address_family_ipv4: "enable"
+        #            address_family_ipv6: "enable"
+
+        prefix_lists:
+           external_in:
+               - "ip 10 permit 0.0.0.0/0 le 32"
+               - "ip 100 deny any"
+           rack_networks:
+               - "ip 10 permit 100.100.10.0/24"
+               - "ip 20 permit 100.100.20.0/24"
+               - "ip 30 permit 100.100.30.0/24"
+               - "ip 40 permit 100.100.40.0/24"
+               - "ip 50 permit 100.100.50.0/24"
+               - "ip 1000 deny any"
+
+
+
+    exit02:
+
+        interfaces:
+        #All L3 interfaces go in this section
+            loopback:
+                ipv4: "10.0.0.16/32"
+            swp44:
+                ipv4: "10.50.2.2/30"
+                alias: "Internet BGP connection"
+
+        bonds:
+            edge01:
+                members: ["swp1"]
+                clagid: 1
+                mtu: 9216
+
+        VLANS:
+            default_vids: "10 20 30 40 50 100-110"
+            default_pvid: "1"
+            STP_priority: "8192"
+            members: ["edge01","regex vni.*"]
+        #MLAG:
+        #    peerlink_name: "peerlink"
+        #    peerlink_sub_int: "4092"
+        #    members: ["swp49","swp50"]
+        #    sysmac: "44:39:39:FF:40:92"
+        #    mtu: 9216
+        #    peerlink_ip: "169.254.255.2"
+        #    peerlink_peer_ip: "169.254.255.1"
+        #    backup_peer: "exit01"
+
+        ### Role cumulus_lnv ###
+        LNV:
+            registration_node:
+                svcnode: "10.0.0.100"
+                vxlan_anycast_ip: "10.0.0.156"
+
+       ### Role cumulus_interfaces ###
+        VXLAN:
+            LNV_VNI_list: ["10","20","30","40","50"]
+
+        BGP:
+            asn: 64702
+            #Redistribute connected routes default is all or specify route-map name
+            redistribute_connected_ipv4: "LOOPBACK"
+            peer_groups:
+                fabric:
+                    interfaces: ["swp51","swp52"]
+
+                internet_peers:
+                    remote_as: "external"
+                    peers: ["10.50.2.1"]
+                    prefix_list_in: "external_in"
+                    prefix_list_out: "rack_networks"
+                    description: "Internet networks"
+                    address_family_ipv4: "enable"
+                    address_family_ipv6: "enable"
+
+        prefix_lists:
+           external_in:
+               - "ip 10 permit 0.0.0.0/0 le 32"
+               - "ip 100 deny any"
+           rack_networks:
+               - "ip 10 permit 100.100.10.0/24"
+               - "ip 20 permit 100.100.20.0/24"
+               - "ip 30 permit 100.100.30.0/24"
+               - "ip 40 permit 100.100.40.0/24"
+               - "ip 50 permit 100.100.50.0/24"
+               - "ip 1000 deny any"
+
+
+
+    spine01:
+        interfaces:
+        #All L3 interfaces go in this section
+            loopback:
+                ipv4: "10.0.0.21/32"
+
+        BGP:
+            asn: 64512
+            #Redistribute connected routes default is all or specify route-map name
+            redistribute_connected_ipv4: "LOOPBACK"
+            peer_groups:
+                fabric:
+                    interfaces: ["swp1","swp2","swp3","swp4","swp29","swp30"]
+
+        LNV:
+            service_node:
+                anycast: "10.0.0.100"
+                peers: ["10.0.0.22"]
+
+
+
+    spine02:
+        interfaces:
+        #All L3 interfaces go in this section
+            loopback:
+                ipv4: "10.0.0.22/32"
+
+        BGP:
+            asn: 64512
+            #Redistribute connected routes default is all or specify route-map name
+            redistribute_connected_ipv4: "LOOPBACK"
+            peer_groups:
+                fabric:
+                    interfaces: ["swp1","swp2","swp3","swp4","swp29","swp30"]
+
+        LNV:
+            service_node:
+                anycast: "10.0.0.100"
+                peers: ["10.0.0.21"]
+
+
+
+    edge01:
+        interfaces:
+            loopback:
+                ip: "10.0.1.105/32"
+        bonds:
+            uplink:
+                mode: "trunk"
+                members: ["eth1","eth2"]
+        VLANS:
+            default_vids: "10 20 30 40 50"
+            default_pvid: "1"
+            members: ["uplink"]
+
+        SVI:
+            VLAN10:
+                ipv4: "192.168.10.1/24"
+            VLAN20:
+                ipv4: "192.168.20.1/24"
+            VLAN30:
+                ipv4: "192.168.30.1/24"
+            VLAN40:
+                ipv4: "192.168.40.1/24"
+            VLAN50:
+                ipv4: "192.168.50.1/24"
+
+
+    server01:
+        interfaces:
+            loopback:
+                ipv4: "10.0.1.101/32"
+        bonds:
+            uplink:
+                mode: "trunk"
+                members: ["eth1","eth2"]
+        VLANS:
+            default_vids: "10 20 30 40 50"
+            default_pvid: "1"
+            members: ["uplink"]
+
+        SVI:
+            VLAN10:
+                ipv4: "192.168.10.101/24"
+            VLAN20:
+                ipv4: "192.168.20.101/24"
+            VLAN30:
+                ipv4: "192.168.30.101/24"
+            VLAN40:
+                ipv4: "192.168.40.101/24"
+            VLAN50:
+                ipv4: "192.168.50.101/24"
+
+
+    server02:
+        interfaces:
+            loopback:
+                ipv4: "10.0.1.102/32"
+        bonds:
+            uplink:
+                mode: "trunk"
+                members: ["eth1","eth2"]
+        VLANS:
+            default_vids: "10 20 30 40 50"
+            default_pvid: "1"
+            members: ["uplink"]
+
+        SVI:
+            VLAN10:
+                ipv4: "192.168.10.102/24"
+            VLAN20:
+                ipv4: "192.168.20.102/24"
+            VLAN30:
+                ipv4: "192.168.30.102/24"
+            VLAN40:
+                ipv4: "192.168.40.102/24"
+            VLAN50:
+                ipv4: "192.168.50.102/24"
+
+    server03:
+        interfaces:
+            loopback:
+                ipv4: "10.0.1.103/32"
+        bonds:
+            uplink:
+                mode: "trunk"
+                members: ["eth1","eth2"]
+        VLANS:
+            default_vids: "10 20 30 40 50"
+            default_pvid: "1"
+            members: ["uplink"]
+
+        SVI:
+            VLAN10:
+                ipv4: "192.168.10.103/24"
+            VLAN20:
+                ipv4: "192.168.20.103/24"
+            VLAN30:
+                ipv4: "192.168.30.103/24"
+            VLAN40:
+                ipv4: "192.168.40.103/24"
+            VLAN50:
+                ipv4: "192.168.50.103/24"
+
+
+    server04:
+        interfaces:
+            loopback:
+                ipv4: "10.0.1.104/32"
+            eth1:
+                ipv4: "1.1.1.1/32"
+        bonds:
+            uplink:
+                mode: "trunk"
+                members: ["eth2"]
+        VLANS:
+            default_vids: "10 20 30 40 50"
+            default_pvid: "1"
+            members: ["uplink"]
+
+        SVI:
+            VLAN10:
+                ipv4: "192.168.10.104/24"
+            VLAN20:
+                ipv4: "192.168.20.104/24"
+            VLAN30:
+                ipv4: "192.168.30.104/24"
+            VLAN40:
+                ipv4: "192.168.40.104/24"
+            VLAN50:
+                ipv4: "192.168.50.104/24"
+
+
+    internet:
+        interfaces:
+        #All L3 interfaces go in this section
+            loopback:
+                ipv4: "10.0.0.50/32"
+            swp1:
+                ipv4: "10.50.1.1/30"
+            swp2:
+                ipv4: "10.50.2.1/30"
+            swp48:
+
+

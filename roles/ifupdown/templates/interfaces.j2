@@ -1,0 +1,99 @@
+{% set node = node[ansible_hostname] %}
+{% set intvars = node.interfaces %}
+{% set bonds = node.bonds %}
+{% set vlans = node.VLANS %}
+{% set svi = node.SVI %}
+# /etc/network/interfaces template for servers ({{ansible_hostname}})
+# Created by Ansible
+
+
+auto eth0
+iface eth0 inet dhcp
+    post-up ip route add default via 192.168.0.1
+
+{### Handle the Loopback and all L3 interfaces ###}
+{% for interface in intvars -%}
+{% if interface == "loopback" -%}
+auto lo
+iface lo inet loopback
+{% elif intvars[interface].ipv4 is defined or intvars[interface].ipv6 is defined %}
+auto {{interface}}
+iface {{interface}} inet static
+{% else %}
+auto {{interface}}
+iface {{interface}} inet manual
+{% endif -%}
+{% if intvars[interface].ipv4 is defined %}
+  address {{intvars[interface].ipv4}}
+{% endif -%}
+{% if intvars[interface].ipv6 is defined %}
+  address {{intvars[interface].ipv6}}
+{% endif -%}
+{% if intvars[interface].alias is defined %}
+  alias {{ intvars[interface].alias }}
+{% endif %}
+{% if intvars[interface].mtu is defined %}
+  mtu {{ intvars[interface].mtu }}
+{% endif %}
+{% endfor %}
+
+{### Build the bonds and member interfaces ###}
+{% if bonds is defined %}
+{% for bond in bonds -%}
+{% if bonds[bond].members is defined %}
+
+{### Loop through and create the member interfaces ###}
+{% for mem_int in bonds[bond].members -%}
+auto {{mem_int}}
+iface {{mem_int}} inet manual
+    bond-master {{bond}}
+{% if bonds[bond].mtu is defined %}
+  mtu {{ bonds[bond].mtu }}
+{% endif %}
+{% endfor %}
+
+
+{### Create the actual bond interface ###}
+auto {{bond}}
+iface {{bond}} inet manual
+    #bond-slaves {{bonds[bond].members | join(" ")}}
+    bond-slaves none
+    bond-mode 802.3ad
+    bond-miimon 100
+    bond-lacp-rate 1
+    bond-min-links 1
+    bond-xmit-hash-policy layer3+4
+
+{% if bonds[bond].mtu is defined %}
+    mtu {{ bonds[bond].mtu }}
+{% endif %}
+
+{% if svi is defined %}
+{% for vlan_int in svi %}
+auto {{bond}}.{{vlan_int[4:]}}
+iface {{bond}}.{{vlan_int[4:]}} inet static
+  vlan-raw-device {{bond}}
+{% if svi[vlan_int].ipv4 is defined %}
+  address {{svi[vlan_int].ipv4}}
+{% endif -%}
+{% if svi[vlan_int].ipv6 is defined %}
+  address {{svi[vlan_int].ipv6}}
+{% endif -%}
+{% if svi[vlan_int].alias is defined %}
+  alias {{svi[vlan_int].alias}}
+{% endif -%}
+{% if svi[vlan_int].vrr_mac is defined %}
+{% if svi[vlan_int].vrr_ipv4 is defined %}
+  address-virtual {{svi[vlan_int].vrr_mac}} {{svi[vlan_int].vrr_ipv4}}
+{% endif -%}
+{% if svi[vlan_int].vrr_ipv6 is defined %}
+  address-virtual {{svi[vlan_int].vrr_mac}} {{svi[vlan_int].vrr_ipv6}}
+{% endif -%}
+{% endif -%}
+{% endfor %}
+{% endif -%}
+
+
+{% endif %}
+{% endfor %}
+{% endif %}

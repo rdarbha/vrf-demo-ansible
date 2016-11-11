@@ -1,0 +1,216 @@
+{% set node = node[ansible_hostname] %}
+{% set intvars = node.interfaces %}
+{% set bonds = node.bonds %}
+{% set vlans = node.VLANS %}
+{% set svi = node.SVI %}
+{% set MLAGvars = node.MLAG %}
+{% set bgpvars = node.bgp %}
+# /etc/network/interfaces template for switches ({{ansible_hostname}})
+# Created by Ansible
+
+auto eth0
+iface eth0 inet dhcp
+
+{### Handle the Loopback and all L3 interfaces ###}
+{% for interface in intvars -%}
+{% if interface == "loopback" -%}
+auto lo
+iface lo inet loopback
+{% else %}
+auto {{interface}}
+iface {{interface}}
+{% endif -%}
+{% if intvars[interface].ipv4 is defined %}
+{%    for ipaddr in intvars[interface].ipv4 -%}
+  address {{intvars[interface].ipv4}}
+{%    endfor %}
+{% endif -%}
+{% if intvars[interface].ipv6 is defined %}
+{%    for ipaddr in intvars[interface].ipv6 -%}
+  address {{intvars[interface].ipv6}}
+{%    endfor %}
+{% endif -%}
+{% if intvars[interface].alias is defined %}
+  alias {{ intvars[interface].alias }}
+{% endif %}
+{% if intvars[interface].mtu is defined %}
+  mtu {{ intvars[interface].mtu }}
+{% endif %}
+{% if intvars[interface].speed is defined %}
+  link-speed {{ intvars[interface].speed }}
+{% endif %}
+{% if intvars[interface].duplex is defined %}
+  link-duplex {{ intvars[interface].duplex }}
+{% endif %}
+{% if intvars[interface].autoneg is defined %}
+  link-autoneg {{ intvars[interface].autoneg }}
+{% endif %}
+{### If vids is defined it's a trunk otherwise check if access port ###}
+{% if intvars[interface].vids is defined %}
+   bridge-vids {{ intvars[interface].vids }}
+{%   if intvars[interface].pvid is defined %}
+   bridge-pvid {{ intvars[interface].pvid }}
+{%   endif %}
+{% else %}
+{%   if intvars[interface].bridge_access is defined %}
+   bridge-access {{ intvars[interface].bridge_access }}
+{%   endif %}
+{% endif %}
+{% if intvars[interface].stp_port_cost is defined %}
+   mstpctl-portpathcost {{ intvars[interface].stp_port_cost }}
+{% endif %}
+{% if intvars[interface].bpdugaurd is defined and intvars[interface].bpdugaurd == "enabled" %}
+   mstpctl-bpduguard yes
+{% endif %}
+{% if intvars[interface].adminedge is defined and intvars[interface].adminedge == "enabled" %}
+   mstpctl-portadminedge yes
+{% endif %}
+{% if intvars[interface].vrr_mac is defined %}
+{%   if intvars[interface].vrr_ipv4 is defined %}
+   address-virtual {{intvars[interface].vrr_mac}} {{intvars[interface].vrr_ipv4}}
+{%   endif -%}
+{%   if intvars[interface].vrr_ipv6 is defined %}
+   address-virtual {{intvars[interface].vrr_mac}} {{intvars[interface].vrr_ipv6}}
+{%   endif -%}
+{% endif -%}
+{% if intvars[interface].post_up is defined %}
+   post-up {{ intvars[interface].post_up }}
+{% endif %}
+{% if intvars[interface].post_down is defined %}
+   post-down {{ intvars[interface].post_down }}
+{% endif %}
+
+{% endfor %}
+
+{### Build the bonds and member interfaces ###}
+{% if bonds is defined %}
+{% for bond in bonds -%}
+{% if bonds[bond].members is defined %}
+
+{### Loop through and create the member interfaces ###}
+{% for mem_int in bonds[bond].members -%}
+auto {{mem_int}}
+iface {{mem_int}}
+  post-up ip link set $IFACE promisc on
+{% if bonds[bond].mtu is defined %}
+  mtu {{ bonds[bond].mtu }}
+{% endif %}
+{% endfor %}
+
+{### Create the actual bond interface ###}
+auto {{bond}}
+iface {{bond}}
+  bond-slaves {{bonds[bond].members | join(" ")}}
+{% if bonds[bond].mtu is defined %}
+  mtu {{ bonds[bond].mtu }}
+{% endif %}
+{% if bonds[bond].VLANS is defined %}
+  bridge-vids {{bonds[bond].VLANS}}
+{% endif %}
+{% if bonds[bond].pvid is defined %}
+  bridge-pvid {{bonds[bond].pvid}}
+{% endif %}
+{% if bonds[bond].clagid is defined %}
+  clag-id {{bonds[bond].clagid}}
+{% endif %}
+{% if bonds[bond].ipv4 is defined %}
+  address {{bonds[bond].ipv4}}
+{% endif %}
+{% if bonds[bond].ipv6 is defined %}
+  address {{bonds[bond].ipv6}}
+{% endif %}
+
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{### Build the peerlink and member interfaces ###}
+{% if MLAGvars is defined %}
+{% if MLAGvars.members is defined %}
+{### Loop through and create the member interfaces ###}
+{% for member in MLAGvars.members -%}
+auto {{member}}
+iface {{member}}
+  post-up ip link set $IFACE promisc on
+{% endfor %}
+
+{### Create the peerlink bond default to name peerlink unless a specifc name specified ###}
+{% if MLAGvars.peerlink_name is defined %}
+auto {{MLAGvars.peerlink_name}}
+iface {{MLAGvars.peerlink_name}}
+{% else %}
+auto peerlink
+iface peerlink
+{% endif %}
+bond-slaves {{MLAGvars.members | join(" ")}}
+
+{### Create the peerlink sub interface for CLAG communication ###}
+{% if MLAGvars.peerlink_name is defined %}
+auto {{MLAGvars.peerlink_name}}.{{MLAGvars.peerlink_sub_int}}
+iface {{MLAGvars.peerlink_name}}.{{MLAGvars.peerlink_sub_int}}
+{% else %}
+auto peerlink.{{MLAGvars.peerlink_sub_int}}
+iface peerlink.{{MLAGvars.peerlink_sub_int}}
+{% endif %}
+  clagd-enable yes
+  address {{MLAGvars.peerlink_ip}}/30
+  clagd-peer-ip {{MLAGvars.peerlink_peer_ip}}
+  clagd-backup-ip {{hostvars[MLAGvars.backup_peer]['ansible_eth0']['ipv4']['address']}}
+  clagd-sys-mac {{MLAGvars.sysmac}}
+{% if MLAGvars.description is defined %}
+  alias {{MLAGvars.description}}
+{% endif %}
+{% endif %}
+{% endif %}
+
+
+{### Create the VLAN aware bridge (Yeah only mode supported for now ###}
+{% if vlans is defined %}
+auto bridge
+iface bridge
+  bridge-vlan-aware yes
+  bridge-ports {{vlans.members | join(" ")}} {{MLAGvars.peerlink_name}}
+{% if vlans.default_vids is defined %}
+  bridge-vids {{vlans.default_vids}}
+{% endif %}
+{% if vlans.default_pvid is defined %}
+  bridge-pvid {{vlans.default_pvid}}
+{% endif %}
+{% if vlans.STP_priority is defined %}
+  mstpctl-treeprio {{vlans.STP_priority}}
+{% endif %}
+{% endif %}
+
+{% if svi is defined %}
+{% for vlan_int in svi %}
+auto bridge.{{vlan_int[4:]}}
+iface bridge.{{vlan_int[4:]}}
+{% if svi[vlan_int].ipv4 is defined %}
+  address {{svi[vlan_int].ipv4}}
+{% endif -%}
+{% if svi[vlan_int].ipv6 is defined %}
+  address {{svi[vlan_int].ipv6}}
+{% endif -%}
+{% if svi[vlan_int].alias is defined %}
+  alias {{svi[vlan_int].alias}}
+{% endif -%}
+{% if svi[vlan_int].vrr_mac is defined %}
+{% if svi[vlan_int].vrr_ipv4 is defined %}
+  address-virtual {{svi[vlan_int].vrr_mac}} {{svi[vlan_int].vrr_ipv4}}
+{% endif -%}
+{% if svi[vlan_int].vrr_ipv6 is defined %}
+  address-virtual {{svi[vlan_int].vrr_mac}} {{svi[vlan_int].vrr_ipv6}}
+{% endif -%}
+{% endif -%}
+{% endfor %}
+{% endif -%}
+
+
+{% if bgpvars is defined %}
+{% for iface in bgpvars.fabric %}
+auto {{ iface }}
+iface {{ iface }}
+    mtu 9216
+{% endfor %}
+{% endif %}
+

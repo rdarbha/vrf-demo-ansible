@@ -1,0 +1,42 @@
+#Create read only user with specific name
+- name: Create read-only user account {{global.readonly_user}}
+  user: name="{{global.readonly_user}}" comment="RO access account" shell=/bin/bash password="{{global.readonly_password}}"
+  when: global.readonly_user is defined and global.readonly_password is defined
+  tags:
+    - user_setup
+
+#Create read only user named readonly password readonly
+- name: Create read-only user account readonly ----CHANGE THIS PASSWORD----
+  user: name="readonly" comment="RO access account" shell=/bin/bash password="$6$rfH4mWO4$/oHXVXgETP3B0yKODA6IlTBsuepqKvcn4w7CXvwhtWeW71KXNABIZ5EGhCWqDtR7darGAlQa6Zp1hjmOrxStb1"
+  when: global.readonly_user is not defined
+  tags:
+    - user_setup
+
+#Setup password encryption in Quagga and set the vty password and enable password
+#- name: Enable service password encryption
+#  shell: "vtysh -c 'conf t' -c 'service password-encryption' -c 'password {{readonly_quaggapwd}}' -c 'enable password {{enable_pwd}}'"
+
+- name: Create command script on remote host
+  copy:
+    content: |
+      #! /bin/bash
+      { sleep 1; echo {{global.readonly_password}}; sleep 1; echo show $1 $2 $3 $4; sleep 1; } |  telnet localhost bgpd
+    dest: "/home/{{global.readonly_user}}/ro_cmd.sh"
+    owner: "{{global.readonly_user}}"
+    group: "{{global.readonly_user}}"
+    mode: 0744
+  when: global.readonly_user is defined and global.readonly_password is defined
+  tags:
+    - user_setup
+
+#Setup an alias so if the user types "show ip bgp sum" it auto telnets for them
+- name: Setup show alias for readonly user
+  blockinfile:
+    dest: /home/{{global.readonly_user}}/.bashrc
+    marker: "##{mark} -- Quagga show alias -- ##"
+    block: |
+      alias show=/home/{{global.readonly_user}}/ro_cmd.sh
+  when: global.readonly_user is defined
+  tags:
+    - user_setup
+

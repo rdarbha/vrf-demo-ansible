@@ -1,0 +1,48 @@
+- name: restart switchd
+  service: name=switchd state=restarted
+
+- name: wait for switchd to start
+  wait_for:  path=/var/run/switchd.ready delay=15
+
+- name: restart LLDP
+  service: name=lldpd state=restarted
+
+- name: restart PTM
+  service: name=ptmd state=restarted
+
+- name: restart NTP
+  service: name=ntp state=restarted
+
+- name: update timezone
+  command: dpkg-reconfigure -f noninteractive tzdata
+
+#Poll the PTM service for the current state and details of the connections
+- name: Check PTM status
+  command: ptmctl -d
+  register: ptmctl_output
+  notify: Print PTM table
+
+#Print out the results (Note in the command above you could use JSON output by adding -j)
+- name: Print PTM table
+  debug: var=ptmctl_output.stdout.split('\n')
+
+#Pull the lldp neighbor table
+- name: Check lldp neighbors
+  command: lldpctl
+  register: lldpctl_output
+  notify: Print lldp neighbors
+
+#Print out the results (Note in the command above you could use JSON output by adding -f json)
+- name: Print lldp neighbors
+  debug: var=lldpctl_output.stdout.split('\n')
+
+- name: Verify NTP
+  command: ntpq -p
+  register: ntpq_output
+  notify: Print ntp peer status
+
+- name: Print ntp peer status
+  debug: var=ntpq_output.stdout.split('\n')
+ 
+- name: restart rsyslog
+  service: name=rsyslog state=restarted

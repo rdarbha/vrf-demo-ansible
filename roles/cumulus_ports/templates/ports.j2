@@ -1,0 +1,16 @@
+{% set node = node[ansible_hostname] %}
+{% if node.ports is defined %}
+{%   set ports_vars = node.ports %}
+{% endif %}
+
+##Ansible managed file.  Changes to this file require a switchd restart.  
+## Switchd server restart Will cause traffic interruption to reprogram ASIC.
+
+{% if ports_vars is defined %}
+{%   for interface in ports_vars -%}
+{%     if ports_vars[interface] is defined and ports_vars[interface] is not none %}
+{{interface[3:]}}={{ports_vars[interface]}}
+{%     endif %}
+{%   endfor %}
+{% endif %}
+

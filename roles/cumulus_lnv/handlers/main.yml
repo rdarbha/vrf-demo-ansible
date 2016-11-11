@@ -1,0 +1,32 @@
+- name: enable and restart vxsnd
+  service: name=vxsnd state=restarted enabled=yes
+  notify: check status to see if vxsnd is running
+  ignore_errors: yes
+
+- name: enable and restart vxrd
+  service: name=vxrd state=restarted enabled=yes
+  ignore_errors: yes
+  when: (node[ansible_hostname].LNV.registration_node is defined)
+  
+- name: check status to see if vxsnd is running
+  shell: systemctl status vxsnd.service | grep Active
+  register: vxsnd
+  notify: stop and start vxsnd.service manually (1/2)
+  
+- name: stop and start vxsnd.service manually (1/2)
+  shell: systemctl stop vxsnd.service; systemctl disable vxsnd.service
+  notify: start vxsnd service (2/2)
+  when: ("failed" in vxsnd.stdout and "start-limit" in vxsnd.stdout)
+  
+- name: start vxsnd service (2/2)
+  service: name=vxsnd state=started enabled=yes
+  when: ("failed" in vxsnd.stdout and "start-limit" in vxsnd.stdout)
+
+- name: stop and start vxrd.service manually (1/2)
+  shell: systemctl stop vxrd.service; systemctl disable vxrd.service
+  notify: start vxrd service (2/2)
+  when: ("failed" in vxrd.stdout and "start-limit" in vxrd.stdout)
+    
+- name: start vxrd service (2/2)
+  service: name=vxrd state=started enabled=yes
+  when: ("failed" in vxrd.stdout and "start-limit" in vxrd.stdout)

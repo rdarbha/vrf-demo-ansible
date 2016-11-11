@@ -1,0 +1,41 @@
+---
+- hosts: leafs
+  user: cumulus
+  become: yes
+  become_method: sudo
+  roles:
+    - cumulus_ports
+    - cumulus_common
+    - cumulus_interfaces
+    - cumulus_quagga
+    - cumulus_lnv
+    - cumulus_readonly
+
+- hosts: spines
+  user: cumulus
+  become: yes
+  become_method: sudo
+  roles:
+    - cumulus_ports
+    - cumulus_common
+    - cumulus_interfaces
+    - cumulus_quagga
+    - cumulus_lnv
+    - cumulus_readonly
+
+
+#- hosts: internet
+#  user: cumulus
+#  become: yes
+#  become_method: sudo
+#  roles:
+#    - ifupdown2
+
+
+- hosts: servers
+  user: cumulus
+  become: yes
+  become_method: sudo
+  roles:
+    - ifupdown
+

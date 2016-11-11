@@ -1,0 +1,23 @@
+- name: create config folder locally
+  file: path=config/{{ ansible_hostname }} state=directory recurse=yes
+  delegate_to: localhost
+  tags:
+    - interface_setup
+    - local
+  when: global.save_local is defined and global.save_local == "enable"
+
+# This task configures /etc/network/interfaces on ifupdown2. The variables for
+# which interfaces are neighbors and networks come from the group_vars/all file.
+- name: configure /etc/network/interfaces
+  template: src=interfaces.j2 dest=/etc/network/interfaces
+  notify: reload networking
+  tags:
+    - interface_setup
+
+- name: create rendered flat-file /etc/network/interfaces locally
+  template: src=interfaces.j2 dest=config/{{ ansible_hostname }}/interfaces
+  delegate_to: localhost
+  tags:
+    - interface_setup
+    - local
+  when: global.save_local is defined and global.save_local == "enable"
