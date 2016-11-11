@@ -363,11 +363,18 @@ iface vni-10{{vni_id}}
 {%   endif -%}
 {% endif -%}
 
-{% if bgpvars is defined and bgpvars.peer_groups.fabric.interfaces is defined %}
+{# {% if bgpvars is defined and bgpvars.peer_groups.fabric.interfaces is defined %}
 {% for iface in bgpvars.peer_groups.fabric.interfaces %}
 auto {{ iface }}
 iface {{ iface }}
     mtu 9216
 {% endfor %}
-{% endif %}
+{% endif %} #}
 
+{% for vrf in VRFs -%}
+{%   for neighbor in bgpvars.peer_groups[groupname].interfaces %}
+auto {{ iface }}
+iface {{ iface }}
+    mtu 9216
+{%   endfor %}
+{% endfor %}
