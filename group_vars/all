@@ -501,6 +501,13 @@ node:
             swp4.100:
             swp4.200:
 
+        VRF:
+            red:
+                #Add ipv4 and ipv6 loopback IP addresses to the VRF
+                ipv4: "10.0.0.21/32"
+            blue:
+                ipv4: "10.0.0.21/32"
+
         BGP:
             red:
                 asn: 64512
@@ -538,6 +545,13 @@ node:
             swp4:
             swp4.100:
             swp4.200:
+
+        VRF:
+            red:
+                #Add ipv4 and ipv6 loopback IP addresses to the VRF
+                ipv4: "10.0.0.22/32"
+            blue:
+                ipv4: "10.0.0.22/32"
 
         BGP:
             red:
