@@ -1,3 +1,4 @@
+{% set node = node[ansible_hostname] %}
 {% if node.VRF is defined %}
 {%   set VRFs = node.VRF %}
 {% endif %}

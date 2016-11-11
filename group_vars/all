@@ -252,27 +252,58 @@ node:
         swp1:
         swp2:
 
+        VRF:
+            red:
+                #Add ipv4 and ipv6 loopback IP addresses to the VRF
+                ipv4: "10.0.0.13/32"
+            blue:
+                ipv4: "10.0.0.13/32"
+
         BGP:
-            asn: 64603
-            #Redistribute connected routes default is all or specify route-map name
-            redistribute_connected_ipv4: "LOOPBACK"
-            peer_groups:
-                fabric:
-                    interfaces: ["swp1","swp2","swp51.100","swp51.200","swp52.100","swp52.200"]
+            red:
+                asn: 64603
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK"
+                peer_groups:
+                    fabric:
+                        interfaces: ["swp1","swp51.100","swp52.100"]
+            blue:
+                asn: 64603
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK"
+                peer_groups:
+                    fabric:
+                        interfaces: ["swp2","swp51.200","swp52.200"]
 
     leaf04:
         interfaces:
             loopback:
                 ipv4: "10.0.0.14/32"
 
-        BGP:
-            asn: 64604
-            #Redistribute connected routes default is all or specify route-map name
-            # redistribute_connected_ipv4: "LOOPBACK"
-            peer_groups:
-                fabric:
-                    interfaces: ["swp1","swp2","swp51.100","swp51.200","swp52.100","swp52.200"]
+        swp1:
+        swp2:
 
+        VRF:
+            red:
+                #Add ipv4 and ipv6 loopback IP addresses to the VRF
+                ipv4: "10.0.0.11/32"
+            blue:
+                ipv4: "10.0.0.11/32"
+
+        BGP:
+            red:
+                asn: 64604
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK"
+                peer_groups:
+                    fabric:
+                        interfaces: ["swp1","swp51.100","swp52.100"]
+            blue:
+                asn: 64604
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK"
+                peer_groups:
+                    fabric:
 
     # exit01:
     #     interfaces:
@@ -442,14 +473,34 @@ node:
                 vrfmgmt: "enable"
                 dhcp: "enable"
 
-        BGP:
-            asn: 64512
-            #Redistribute connected routes default is all or specify route-map name
-            redistribute_connected_ipv4: "LOOPBACK"
-            peer_groups:
-                fabric:
-                    interfaces: ["swp1.100","swp1.200","swp2.100","swp2.200","swp3.100","swp3.200","swp4.100","swp4.200"]
+            swp1:
+            swp1.100:
+            swp1.200:
+            swp2:
+            swp2.100:
+            swp2.200:
+            swp3:
+            swp3.100:
+            swp3.200:
+            swp4:
+            swp4.100:
+            swp4.200:
 
+        BGP:
+            red:
+                asn: 64512
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK"
+                peer_groups:
+                    fabric:
+                        interfaces: ["swp1.100","swp2.100","swp3.100","swp4.100"]
+            blue:
+                asn: 64512
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK"
+                peer_groups:
+                    fabric:
+                        interfaces: ["swp1.200","swp2.200","swp3.200","swp4.200"]
     spine02:
         interfaces:
         #All L3 interfaces go in this section
@@ -460,13 +511,34 @@ node:
                 vrfmgmt: "enable"
                 dhcp: "enable"
 
+            swp1:
+            swp1.100:
+            swp1.200:
+            swp2:
+            swp2.100:
+            swp2.200:
+            swp3:
+            swp3.100:
+            swp3.200:
+            swp4:
+            swp4.100:
+            swp4.200:
+
         BGP:
-            asn: 64512
-            #Redistribute connected routes default is all or specify route-map name
-            redistribute_connected_ipv4: "LOOPBACK"
-            peer_groups:
-                fabric:
-                    interfaces: ["swp1.100","swp1.200","swp2.100","swp2.200","swp3.100","swp3.200","swp4.100","swp4.200"]
+            red:
+                asn: 64512
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK"
+                peer_groups:
+                    fabric:
+                        interfaces: ["swp1.100","swp2.100","swp3.100","swp4.100"]
+            blue:
+                asn: 64512
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK"
+                peer_groups:
+                    fabric:
+                        interfaces: ["swp1.200","swp2.200","swp3.200","swp4.200"]
 
     # edge01:
     #     interfaces:
