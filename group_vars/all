@@ -260,7 +260,6 @@ node:
             loopback:
                 ipv4: "10.0.0.13/32"
 
-
         swp1:
         swp2:
 
@@ -270,7 +269,7 @@ node:
             redistribute_connected_ipv4: "LOOPBACK"
             peer_groups:
                 fabric:
-                    interfaces: ["swp1","swp2","swp51","swp52"]
+                    interfaces: ["swp1","swp2","swp51.100","swp51.200","swp52.100","swp52.200"]
 
     leaf04:
         interfaces:
@@ -456,14 +455,7 @@ node:
             redistribute_connected_ipv4: "LOOPBACK"
             peer_groups:
                 fabric:
-                    interfaces: ["swp1","swp2","swp3","swp4","swp29","swp30"]
-
-        LNV:
-            service_node:
-                anycast: "10.0.0.100"
-                peers: ["10.0.0.22"]
-
-
+                    interfaces: ["swp1.100","swp1.200","swp2.100","swp2.200","swp3.100","swp3.200","swp4.100","swp4.200"]
 
     spine02:
         interfaces:
@@ -477,39 +469,32 @@ node:
             redistribute_connected_ipv4: "LOOPBACK"
             peer_groups:
                 fabric:
-                    interfaces: ["swp1","swp2","swp3","swp4","swp29","swp30"]
+                    interfaces: ["swp1.100","swp1.200","swp2.100","swp2.200","swp3.100","swp3.200","swp4.100","swp4.200"]
 
-        LNV:
-            service_node:
-                anycast: "10.0.0.100"
-                peers: ["10.0.0.21"]
+    # edge01:
+    #     interfaces:
+    #         loopback:
+    #             ip: "10.0.1.105/32"
+    #     bonds:
+    #         uplink:
+    #             mode: "trunk"
+    #             members: ["eth1","eth2"]
+    #     VLANS:
+    #         default_vids: "10 20 30 40 50"
+    #         default_pvid: "1"
+    #         members: ["uplink"]
 
-
-
-    edge01:
-        interfaces:
-            loopback:
-                ip: "10.0.1.105/32"
-        bonds:
-            uplink:
-                mode: "trunk"
-                members: ["eth1","eth2"]
-        VLANS:
-            default_vids: "10 20 30 40 50"
-            default_pvid: "1"
-            members: ["uplink"]
-
-        SVI:
-            VLAN10:
-                ipv4: "192.168.10.1/24"
-            VLAN20:
-                ipv4: "192.168.20.1/24"
-            VLAN30:
-                ipv4: "192.168.30.1/24"
-            VLAN40:
-                ipv4: "192.168.40.1/24"
-            VLAN50:
-                ipv4: "192.168.50.1/24"
+    #     SVI:
+    #         VLAN10:
+    #             ipv4: "192.168.10.1/24"
+    #         VLAN20:
+    #             ipv4: "192.168.20.1/24"
+    #         VLAN30:
+    #             ipv4: "192.168.30.1/24"
+    #         VLAN40:
+    #             ipv4: "192.168.40.1/24"
+    #         VLAN50:
+    #             ipv4: "192.168.50.1/24"
 
 
     server01:
@@ -569,26 +554,28 @@ node:
         interfaces:
             loopback:
                 ipv4: "10.0.1.103/32"
-        bonds:
-            uplink:
-                mode: "trunk"
-                members: ["eth1","eth2"]
-        VLANS:
-            default_vids: "10 20 30 40 50"
-            default_pvid: "1"
-            members: ["uplink"]
+            eth1:
+            eth2:
+        # bonds:
+        #     uplink:
+        #         mode: "trunk"
+        #         members: ["eth1","eth2"]
+        # VLANS:
+        #     default_vids: "10 20 30 40 50"
+        #     default_pvid: "1"
+        #     members: ["uplink"]
 
-        SVI:
-            VLAN10:
-                ipv4: "192.168.10.103/24"
-            VLAN20:
-                ipv4: "192.168.20.103/24"
-            VLAN30:
-                ipv4: "192.168.30.103/24"
-            VLAN40:
-                ipv4: "192.168.40.103/24"
-            VLAN50:
-                ipv4: "192.168.50.103/24"
+        # SVI:
+        #     VLAN10:
+        #         ipv4: "192.168.10.103/24"
+        #     VLAN20:
+        #         ipv4: "192.168.20.103/24"
+        #     VLAN30:
+        #         ipv4: "192.168.30.103/24"
+        #     VLAN40:
+        #         ipv4: "192.168.40.103/24"
+        #     VLAN50:
+        #         ipv4: "192.168.50.103/24"
 
 
     server04:
@@ -596,38 +583,39 @@ node:
             loopback:
                 ipv4: "10.0.1.104/32"
             eth1:
-                ipv4: "1.1.1.1/32"
-        bonds:
-            uplink:
-                mode: "trunk"
-                members: ["eth2"]
-        VLANS:
-            default_vids: "10 20 30 40 50"
-            default_pvid: "1"
-            members: ["uplink"]
+                # ipv4: "1.1.1.1/32"
+            eth2:
+        # bonds:
+        #     uplink:
+        #         mode: "trunk"
+        #         members: ["eth2"]
+        # VLANS:
+        #     default_vids: "10 20 30 40 50"
+        #     default_pvid: "1"
+        #     members: ["uplink"]
 
-        SVI:
-            VLAN10:
-                ipv4: "192.168.10.104/24"
-            VLAN20:
-                ipv4: "192.168.20.104/24"
-            VLAN30:
-                ipv4: "192.168.30.104/24"
-            VLAN40:
-                ipv4: "192.168.40.104/24"
-            VLAN50:
-                ipv4: "192.168.50.104/24"
+        # SVI:
+        #     VLAN10:
+        #         ipv4: "192.168.10.104/24"
+        #     VLAN20:
+        #         ipv4: "192.168.20.104/24"
+        #     VLAN30:
+        #         ipv4: "192.168.30.104/24"
+        #     VLAN40:
+        #         ipv4: "192.168.40.104/24"
+        #     VLAN50:
+        #         ipv4: "192.168.50.104/24"
 
 
-    internet:
-        interfaces:
-        #All L3 interfaces go in this section
-            loopback:
-                ipv4: "10.0.0.50/32"
-            swp1:
-                ipv4: "10.50.1.1/30"
-            swp2:
-                ipv4: "10.50.2.1/30"
-            swp48:
+    # internet:
+    #     interfaces:
+    #     #All L3 interfaces go in this section
+    #         loopback:
+    #             ipv4: "10.0.0.50/32"
+    #         swp1:
+    #             ipv4: "10.50.1.1/30"
+    #         swp2:
+    #             ipv4: "10.50.2.1/30"
+    #         swp48:
 
 
