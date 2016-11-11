@@ -263,8 +263,20 @@ node:
             loopback:
                 ipv4: "10.0.0.13/32"
 
-        swp1:
-        swp2:
+            swp1:
+            swp2:
+            swp51:
+            swp51.100:
+                vrf: "red"
+            swp51.200:
+                vrf: "blue"
+                #ipv4: "10.0.100.11/24"
+                #vrf: "red"
+            swp52:
+            swp52.100:
+                vrf: "red"
+            swp52.200:
+                vrf: "blue"
 
         VRF:
             red:
@@ -294,8 +306,21 @@ node:
             loopback:
                 ipv4: "10.0.0.14/32"
 
-        swp1:
-        swp2:
+            swp1:
+            swp2:
+            swp51:
+            swp51.100:
+                vrf: "red"
+            swp51.200:
+                vrf: "blue"
+                #ipv4: "10.0.100.11/24"
+                #vrf: "red"
+            swp52:
+            swp52.100:
+                vrf: "red"
+            swp52.200:
+                vrf: "blue"
+
 
         VRF:
             red:
@@ -490,16 +515,24 @@ node:
 
             swp1:
             swp1.100:
+                vrf: "red"
             swp1.200:
+                vrf: "blue"
             swp2:
             swp2.100:
+                vrf: "red"
             swp2.200:
+                vrf: "blue"
             swp3:
             swp3.100:
+                vrf: "red"
             swp3.200:
+                vrf: "blue"
             swp4:
             swp4.100:
+                vrf: "red"
             swp4.200:
+                vrf: "blue"
 
         VRF:
             red:
@@ -535,16 +568,24 @@ node:
 
             swp1:
             swp1.100:
+                vrf: "red"
             swp1.200:
+                vrf: "blue"
             swp2:
             swp2.100:
+                vrf: "red"
             swp2.200:
+                vrf: "blue"
             swp3:
             swp3.100:
+                vrf: "red"
             swp3.200:
+                vrf: "blue"
             swp4:
             swp4.100:
+                vrf: "red"
             swp4.200:
+                vrf: "blue"
 
         VRF:
             red:
