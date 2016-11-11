@@ -2,7 +2,6 @@
 {% if node.VRF is defined %}
 {%   set VRFs = node.VRF %}
 {% endif %}
-{% set node = node[ansible_hostname] %}
 {% if node.interfaces is defined %}
 {%   set intvars = node.interfaces %}
 {% endif %}
