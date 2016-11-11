@@ -163,9 +163,6 @@ node:
                     fabric:
                         interfaces: ["swp51.200","swp52.200"]
 
-
-
-
     leaf02:
         interfaces:
             loopback:
@@ -190,7 +187,6 @@ node:
 
             swp1:
             swp2:
-
 
         bonds:
             server01:
@@ -236,12 +232,31 @@ node:
                 ipv4: "10.0.0.12/32"
 
         BGP:
-            asn: 64602
-            #Redistribute connected routes default is all or specify route-map name
-            redistribute_connected_ipv4: "LOOPBACK"
-            peer_groups:
-                fabric:
-                    interfaces: ["swp51.100","swp51.200","swp52.100","swp52.200"]
+            red:
+                asn: 64602
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK"
+                # redistribute_connected_ipv6: "LOOPBACK6"
+                #ipv4_networks: ["192.168.10.0/24"]
+                #ipv6_networks: ["2600:1010::0/64"]
+
+                peer_groups:
+                    #Fabric connections are BGP unnumbered spine-leaf connections or ROH
+                    fabric:
+                        interfaces: ["swp51.100","swp52.100"]
+
+            blue:
+                asn: 64602
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK"
+                # redistribute_connected_ipv6: "LOOPBACK6"
+                #ipv4_networks: ["192.168.10.0/24"]
+                #ipv6_networks: ["2600:1010::0/64"]
+
+                peer_groups:
+                    #Fabric connections are BGP unnumbered spine-leaf connections or ROH
+                    fabric:
+                        interfaces: ["swp51.200","swp52.200"]
 
 
     leaf03:
@@ -286,9 +301,9 @@ node:
         VRF:
             red:
                 #Add ipv4 and ipv6 loopback IP addresses to the VRF
-                ipv4: "10.0.0.11/32"
+                ipv4: "10.0.0.14/32"
             blue:
-                ipv4: "10.0.0.11/32"
+                ipv4: "10.0.0.14/32"
 
         BGP:
             red:
@@ -304,6 +319,7 @@ node:
                 redistribute_connected_ipv4: "LOOPBACK"
                 peer_groups:
                     fabric:
+                        interfaces: ["swp2","swp51.200","swp52.200"]
 
     # exit01:
     #     interfaces:
