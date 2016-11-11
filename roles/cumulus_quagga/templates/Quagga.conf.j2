@@ -72,7 +72,7 @@ router bgp {{ vrf.asn }} vrf {{ vrf }}
  neighbor fabric remote-as external
  neighbor fabric description Internal Fabric Network
  neighbor fabric capability extended-nexthop
-{%   for neighbor in bgpvars[vrf].fabric.interfaces %}
+{%   for neighbor in bgpvars[vrf].peer_groups.fabric.interfaces %}
  neighbor {{ neighbor }} interface v6only peer-group fabric
 {%   endfor %}
 !
