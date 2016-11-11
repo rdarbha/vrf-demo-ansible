@@ -78,16 +78,16 @@ router bgp {{ vrf.asn }} vrf {{ vrf }}
 !
  address-family ipv4 unicast
   neighbor fabric activate
-{%   if bgpvars.redistribute_connected_ipv4 is defined -%}
-{%     if bgpvars.redistribute_connected_ipv4 == none %}
+{%   if bgpvars[vrf].redistribute_connected_ipv4 is defined -%}
+{%     if bgpvars[vrf].redistribute_connected_ipv4 == none %}
   redistribute connected
 {%     else %}
-  redistribute connected route-map {{bgpvars.redistribute_connected_ipv4}}
+  redistribute connected route-map {{bgpvars[vrf].redistribute_connected_ipv4}}
 {%     endif -%}
 {%   endif -%}
   maximum-paths 64
-{%   if bgpvars.ipv4_networks is defined -%}
-{%     for v4net in bgpvars.ipv4_networks %}
+{%   if bgpvars[vrf].ipv4_networks is defined -%}
+{%     for v4net in bgpvars[vrf].ipv4_networks %}
   network {{v4net}}
 {%     endfor -%}
 {%   endif -%}

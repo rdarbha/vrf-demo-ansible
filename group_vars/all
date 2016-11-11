@@ -258,7 +258,6 @@ node:
                     fabric:
                         interfaces: ["swp51.200","swp52.200"]
 
-
     leaf03:
         interfaces:
             loopback:
