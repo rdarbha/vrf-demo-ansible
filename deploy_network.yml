@@ -5,7 +5,7 @@
   become_method: sudo
   roles:
     - cumulus_ports
-    - cumulus_common
+    # - cumulus_common
     - cumulus_interfaces
     - cumulus_quagga
     - cumulus_lnv
@@ -17,7 +17,7 @@
   become_method: sudo
   roles:
     - cumulus_ports
-    - cumulus_common
+    # - cumulus_common
     - cumulus_interfaces
     - cumulus_quagga
     - cumulus_lnv
