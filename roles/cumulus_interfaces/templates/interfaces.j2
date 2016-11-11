@@ -372,7 +372,7 @@ iface {{ iface }}
 {% endif %} #}
 
 {% for vrf in VRFs -%}
-{%   for neighbor in bgpvars.peer_groups[groupname].interfaces %}
+{%   for neighbor in bgpvars[vrf].fabric.interfaces %}
 auto {{ iface }}
 iface {{ iface }}
     mtu 9216
