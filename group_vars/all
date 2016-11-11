@@ -457,6 +457,10 @@ node:
         #All L3 interfaces go in this section
             loopback:
                 ipv4: "10.0.0.21/32"
+            eth0:
+                #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
+                vrfmgmt: "enable"
+                dhcp: "enable"
 
         BGP:
             asn: 64512
@@ -471,6 +475,10 @@ node:
         #All L3 interfaces go in this section
             loopback:
                 ipv4: "10.0.0.22/32"
+            eth0:
+                #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
+                vrfmgmt: "enable"
+                dhcp: "enable"
 
         BGP:
             asn: 64512
