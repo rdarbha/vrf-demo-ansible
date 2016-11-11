@@ -14,6 +14,11 @@ global:
         #Interface to use eth0(default)
         listen_int: "eth0"
 
+    route_maps:
+        LOOPBACK:
+            - "route-map LOOPBACK permit 100"
+            - "match interface lo"
+
 
 node:
     leaf01:
@@ -132,65 +137,33 @@ node:
 
         ### Role cumulus_quagga ###
         BGP:
-            asn: 64601
-            #Redistribute connected routes default is all or specify route-map name
-            redistribute_connected_ipv4: "LOOPBACK"
-            #ipv4_networks: ["192.168.10.0/24"]
-            #ipv6_networks: ["2600:1010::0/64"]
+            red:
+                asn: 64601
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK"
+                # redistribute_connected_ipv6: "LOOPBACK6"
+                #ipv4_networks: ["192.168.10.0/24"]
+                #ipv6_networks: ["2600:1010::0/64"]
 
-            peer_groups:
-                #Fabric connections are BGP unnumbered spine-leaf connections or ROH
-                fabric:
-                    interfaces: ["swp51.100","swp51.200","swp52.100","swp52.200"]
+                peer_groups:
+                    #Fabric connections are BGP unnumbered spine-leaf connections or ROH
+                    fabric:
+                        interfaces: ["swp51.100","swp52.100"]
 
-                #Reserved peergroup name, list of eBGP connections default to dual stack
-                #general_peers:
-                    #Represent this ASN to peers in this peergroup
-                    #local_as: "394670"
-                    #The remote ASN for this peergroup  Valid values are:
-                    #number (0-4294967295, "external"(default), or "internal"
-                    #remote_as: "external"
-                    #list of peers to add to the peergroup, can also put interfaces
-                    #peers: ["1.2.3.4","1.2.3.5"]
-                    #prefix_list_in: "external_in"
-                    #prefix_list_out: "rack_networks"
-                    #route_map_in: "rmap_in"
-                    #route_map_out: "rmap_out"
-                    #description: "Test networks"
-                    #To activate a peergroup for IPv4 and/or IPv6 advertisements
-                    #address_family_ipv4: "enable"
-                    #address_family_ipv6: "enable"
-                    #Set the maximum number of routes learned valid (1-4294967295)
-                    #maximum_prefix: "64000"
-                    #Remove private ASN from AS path Valid values:
-                    # "all" (default)  strip all private ASN
-                    # "replace-as" replace with local ASN, preserves path length
-                    #remove_private_AS: "all"
-                    #Allow soft resets using stored BGP updates from peers
-                    #Cumulus supports dynamic route refresh so this is only needed
-                    #for legacy or interop Also do not use for large route tables
-                    #with huge numbers of peers
-                    #soft_reconfiguration: "enable"
-                    #Set a password for the peergroup for basic authentication
-                    #password: "presharedpass"
+            blue:
+                asn: 64601
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK"
+                # redistribute_connected_ipv6: "LOOPBACK6"
+                #ipv4_networks: ["192.168.10.0/24"]
+                #ipv6_networks: ["2600:1010::0/64"]
 
-        #Add static routes in a list
-        #static_routes:
-        #  - "ip route 0.0.0.0/0 208.40.90.1"
+                peer_groups:
+                    #Fabric connections are BGP unnumbered spine-leaf connections or ROH
+                    fabric:
+                        interfaces: ["swp51.200","swp52.200"]
 
-        #Route maps specific to this host
-        #route_maps:
-           #exit02_rm:
-               #- "10 match ip address 1.1.1.1/32"
-               #- "10 set as-path prepend 64512"
-               #- "20 match ip address 1.1.1.1/32"
-               #- "20 set as-path prepend 64512"
 
-        #Specify a prefix list that overrides the global prefix-list if the same name
-        #prefix_lists:
-            #global_out_list:
-                #- "ip 50 permit 5.6.7.0/8 le 32"
-                #- "ip 100 deny any"
 
 
     leaf02:
