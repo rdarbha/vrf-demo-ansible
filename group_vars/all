@@ -255,6 +255,13 @@ node:
             backup_peer: "leaf01"
             description: "Leaf01-Leaf02 MLAG peerlink"
 
+        VRF:
+            red:
+                #Add ipv4 and ipv6 loopback IP addresses to the VRF
+                ipv4: "10.0.0.12/32"
+            blue:
+                ipv4: "10.0.0.12/32"
+
         BGP:
             asn: 64602
             #Redistribute connected routes default is all or specify route-map name
