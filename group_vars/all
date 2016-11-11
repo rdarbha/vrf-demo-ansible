@@ -174,7 +174,7 @@ node:
             #mstpctl-ageing: "300"
             #List of L2 ports on the switch, ports will default to L2 trunks in this list
             #unless a default_vids list or bridge_access is configured under the interface
-            # members: ["server01","server02"]
+            members: ["server01","server02"]
 
         SVI:
             VLAN100:
