@@ -141,7 +141,7 @@ node:
             peer_groups:
                 #Fabric connections are BGP unnumbered spine-leaf connections or ROH
                 fabric:
-                    interfaces: ["swp51","swp52"]
+                    interfaces: ["swp51.100","swp51.200","swp52.100","swp52.200"]
 
                 #Reserved peergroup name, list of eBGP connections default to dual stack
                 #general_peers:
@@ -261,7 +261,7 @@ node:
             redistribute_connected_ipv4: "LOOPBACK"
             peer_groups:
                 fabric:
-                    interfaces: ["swp51","swp52"]
+                    interfaces: ["swp51.100","swp51.200","swp52.100","swp52.200"]
 
 
     leaf03:
