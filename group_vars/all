@@ -6,6 +6,15 @@ global:
     #Save a local copy of all of the templates rendered on the remote switch
     save_local: "enable"
 
+    ntp:
+        #List of NTP servers 0.cumulusnetworks.pool.ntp.org iburst ([0-3]defaults)
+        #servers: ["192.168.100.253","192.168.100.254"]
+        #List of time zones: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+        timezone: "America/New_York"
+        #Interface to use eth0(default)
+        listen_int: "eth0"
+
+
 node:
     leaf01:
         ### Role cumulus_interfaces ###
