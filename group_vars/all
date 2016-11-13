@@ -26,6 +26,9 @@ node:
         #Interface specific configurations for L1/L2/L3 paramenters
         interfaces:
             loopback:
+            loopback.100:
+                ipv4: "10.0.0.11/32"
+            loopback.200:
                 ipv4: "10.0.0.11/32"
 
             eth0:
@@ -144,6 +147,9 @@ node:
     leaf02:
         interfaces:
             loopback:
+            loopback.100:
+                ipv4: "10.0.0.12/32"
+            loopback.200:
                 ipv4: "10.0.0.12/32"
 
             eth0:
@@ -256,6 +262,9 @@ node:
     leaf03:
         interfaces:
             loopback:
+            loopback.100:
+                ipv4: "10.0.0.13/32"
+            loopback.200:
                 ipv4: "10.0.0.13/32"
 
             swp1:
@@ -299,7 +308,11 @@ node:
     leaf04:
         interfaces:
             loopback:
+            loopback.100:
                 ipv4: "10.0.0.14/32"
+            loopback.200:
+                ipv4: "10.0.0.14/32"
+
 
             swp1:
             swp2:
@@ -502,6 +515,9 @@ node:
         interfaces:
         #All L3 interfaces go in this section
             loopback:
+            loopback.100:
+                ipv4: "10.0.0.21/32"
+            loopback.200:
                 ipv4: "10.0.0.21/32"
             eth0:
                 #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
@@ -555,6 +571,9 @@ node:
         interfaces:
         #All L3 interfaces go in this section
             loopback:
+            loopback.100:
+                ipv4: "10.0.0.22/32"
+            loopback.200:
                 ipv4: "10.0.0.22/32"
             eth0:
                 #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
@@ -634,7 +653,7 @@ node:
     server01:
         interfaces:
             loopback:
-                ipv4: "192.168.0.101/32"
+                ipv4: "10.0.0.101/32"
         bonds:
             uplink:
                 #mode: "trunk"
@@ -660,7 +679,7 @@ node:
     server02:
         interfaces:
             loopback:
-                ipv4: "192.168.0.102/32"
+                ipv4: "10.0.0.102/32"
         bonds:
             uplink:
                 # mode: "trunk"
@@ -685,7 +704,7 @@ node:
     server03:
         interfaces:
             loopback:
-                ipv4: "10.0.1.103/32"
+                ipv4: "10.0.0.103/32"
             eth1:
             eth2:
         # bonds:
@@ -713,7 +732,7 @@ node:
     server04:
         interfaces:
             loopback:
-                ipv4: "10.0.1.104/32"
+                ipv4: "10.0.0.104/32"
             eth1:
                 # ipv4: "1.1.1.1/32"
             eth2:
