@@ -26,6 +26,7 @@ node:
         #Interface specific configurations for L1/L2/L3 paramenters
         interfaces:
             loopback:
+                ipv4: "10.0.0.11/32"
             loopback.100:
                 ipv4: "10.0.0.11/32"
             loopback.200:
