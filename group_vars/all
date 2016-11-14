@@ -17,9 +17,9 @@ global:
     route_maps:
         LOOPBACK:
             - "match interface lo"
-        LOOBACK_RED:
+        LOOPBACK_RED:
             - "10 match interface red"
-        LOOBACK_RED:
+        LOOPBACK_RED:
             - "10 match interface blue"
 
 node:
