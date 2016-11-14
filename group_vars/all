@@ -27,10 +27,10 @@ node:
         interfaces:
             loopback:
                 ipv4: "10.0.0.11/32"
-            loopback.100:
+            lo.100:
                 ipv4: "10.0.0.11/32"
                 vrf: "red"
-            loopback.200:
+            lo.200:
                 ipv4: "10.0.0.11/32"
                 vrf: "blue"
 
