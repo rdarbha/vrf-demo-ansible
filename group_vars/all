@@ -19,7 +19,7 @@ global:
             - "match interface lo"
         LOOPBACK_RED:
             - "10 match interface red"
-        LOOPBACK_RED:
+        LOOPBACK_BLUE:
             - "10 match interface blue"
 
 node:
