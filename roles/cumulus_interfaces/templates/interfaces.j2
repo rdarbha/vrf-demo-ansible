@@ -375,6 +375,6 @@ iface {{ iface }}
 {%   for iface in bgpvars[vrf].peer_groups.fabric.interfaces %}
 auto {{ iface }}
 iface {{ iface }}
-    mtu 9216
+    {# mtu 9216 #}
 {%   endfor %}
 {% endfor %}

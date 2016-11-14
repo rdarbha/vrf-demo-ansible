@@ -104,7 +104,7 @@ node:
             peerlink_sub_int: "4094"
             members: ["swp49","swp50"]
             sysmac: "44:39:39:FF:40:94"
-            mtu: 9216
+            # mtu: 9216
             peerlink_ip: "169.254.255.1"
             peerlink_peer_ip: "169.254.255.2"
             #Using ansible facts to get the ipv4 address of eth0 on the peer listed
