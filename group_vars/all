@@ -16,9 +16,11 @@ global:
 
     route_maps:
         LOOPBACK:
-            - "route-map LOOPBACK permit 100"
             - "match interface lo"
-
+        LOOBACK_RED:
+            - "10 match interface red"
+        LOOBACK_RED:
+            - "10 match interface blue"
 
 node:
     leaf01:
@@ -27,12 +29,6 @@ node:
         interfaces:
             loopback:
                 ipv4: "10.0.0.11/32"
-            lo:100:
-                ipv4: "10.0.0.11/32"
-                vrf: "red"
-            lo:200:
-                ipv4: "10.0.0.11/32"
-                vrf: "blue"
 
             eth0:
                 #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
@@ -115,16 +111,16 @@ node:
         VRF:
             red:
                 #Add ipv4 and ipv6 loopback IP addresses to the VRF
-                ipv4: "10.0.0.11/32"
+                ipv4: "10.0.100.11/32"
             blue:
-                ipv4: "10.0.0.11/32"
+                ipv4: "10.0.200.11/32"
 
         ### Role cumulus_quagga ###
         BGP:
             red:
                 asn: 64601
                 #Redistribute connected routes default is all or specify route-map name
-                redistribute_connected_ipv4: "LOOPBACK"
+                redistribute_connected_ipv4: "LOOPBACK_RED"
                 # redistribute_connected_ipv6: "LOOPBACK6"
                 ipv4_networks: ["10.0.100.0/24"]
                 #ipv6_networks: ["2600:1010::0/64"]
@@ -137,7 +133,7 @@ node:
             blue:
                 asn: 64601
                 #Redistribute connected routes default is all or specify route-map name
-                redistribute_connected_ipv4: "LOOPBACK"
+                redistribute_connected_ipv4: "LOOPBACK_BLUE"
                 # redistribute_connected_ipv6: "LOOPBACK6"
                 ipv4_networks: ["10.0.200.0/24"]
                 #ipv6_networks: ["2600:1010::0/64"]
@@ -146,17 +142,16 @@ node:
                     #Fabric connections are BGP unnumbered spine-leaf connections or ROH
                     fabric:
                         interfaces: ["server02","swp51.200","swp52.200"]
+        route_maps:
+            LOOPBACK_RED:
+                - "10 match interface red"
+            LOOPBACK_BLUE:
+                - "10 match interface blue"
 
     leaf02:
         interfaces:
             loopback:
                 ipv4: "10.0.0.12/32"
-            lo:100:
-                ipv4: "10.0.0.12/32"
-                vrf: "red"
-            lo:200:
-                ipv4: "10.0.0.12/32"
-                vrf: "blue"
 
             eth0:
                 vrfmgmt: "enable"
@@ -234,15 +229,15 @@ node:
         VRF:
             red:
                 #Add ipv4 and ipv6 loopback IP addresses to the VRF
-                ipv4: "10.0.0.12/32"
+                ipv4: "10.0.100.12/32"
             blue:
-                ipv4: "10.0.0.12/32"
+                ipv4: "10.0.200.12/32"
 
         BGP:
             red:
                 asn: 64602
                 #Redistribute connected routes default is all or specify route-map name
-                redistribute_connected_ipv4: "LOOPBACK"
+                redistribute_connected_ipv4: "LOOPBACK_RED"
                 # redistribute_connected_ipv6: "LOOPBACK6"
                 ipv4_networks: ["10.0.100.0/24"]
                 #ipv6_networks: ["2600:1010::0/64"]
@@ -255,7 +250,7 @@ node:
             blue:
                 asn: 64602
                 #Redistribute connected routes default is all or specify route-map name
-                redistribute_connected_ipv4: "LOOPBACK"
+                redistribute_connected_ipv4: "LOOPBACK_BLUE"
                 # redistribute_connected_ipv6: "LOOPBACK6"
                 ipv4_networks: ["10.0.200.0/24"]
                 #ipv6_networks: ["2600:1010::0/64"]
@@ -264,17 +259,16 @@ node:
                     #Fabric connections are BGP unnumbered spine-leaf connections or ROH
                     fabric:
                         interfaces: ["swp51.200","swp52.200"]
+        route_maps:
+            LOOPBACK_RED:
+                - "10 match interface red"
+            LOOPBACK_BLUE:
+                - "10 match interface blue"
 
     leaf03:
         interfaces:
             loopback:
                 ipv4: "10.0.0.13/32"
-            lo:100:
-                ipv4: "10.0.0.13/32"
-                vrf: "red"
-            lo:200:
-                ipv4: "10.0.0.13/32"
-                vrf: "blue"
 
             swp1:
             swp2:
@@ -294,37 +288,35 @@ node:
         VRF:
             red:
                 #Add ipv4 and ipv6 loopback IP addresses to the VRF
-                ipv4: "10.0.0.13/32"
+                ipv4: "10.0.100.13/32"
             blue:
-                ipv4: "10.0.0.13/32"
+                ipv4: "10.0.200.13/32"
 
         BGP:
             red:
                 asn: 64603
                 #Redistribute connected routes default is all or specify route-map name
-                redistribute_connected_ipv4: "LOOPBACK"
+                redistribute_connected_ipv4: "LOOPBACK_RED"
                 peer_groups:
                     fabric:
                         interfaces: ["swp1","swp51.100","swp52.100"]
             blue:
                 asn: 64603
                 #Redistribute connected routes default is all or specify route-map name
-                redistribute_connected_ipv4: "LOOPBACK"
+                redistribute_connected_ipv4: "LOOPBACK_BLUE"
                 peer_groups:
                     fabric:
                         interfaces: ["swp2","swp51.200","swp52.200"]
+        route_maps:
+            LOOPBACK_RED:
+                - "10 match interface red"
+            LOOPBACK_BLUE:
+                - "10 match interface blue"
 
     leaf04:
         interfaces:
             loopback:
                 ipv4: "10.0.0.14/32"
-            lo:100:
-                ipv4: "10.0.0.14/32"
-                vrf: "red"
-            lo:200:
-                ipv4: "10.0.0.14/32"
-                vrf: "blue"
-
 
             swp1:
             swp2:
@@ -345,25 +337,30 @@ node:
         VRF:
             red:
                 #Add ipv4 and ipv6 loopback IP addresses to the VRF
-                ipv4: "10.0.0.14/32"
+                ipv4: "10.0.100.14/32"
             blue:
-                ipv4: "10.0.0.14/32"
+                ipv4: "10.0.200.14/32"
 
         BGP:
             red:
                 asn: 64604
                 #Redistribute connected routes default is all or specify route-map name
-                redistribute_connected_ipv4: "LOOPBACK"
+                redistribute_connected_ipv4: "LOOPBACK_RED"
                 peer_groups:
                     fabric:
                         interfaces: ["swp1","swp51.100","swp52.100"]
             blue:
                 asn: 64604
                 #Redistribute connected routes default is all or specify route-map name
-                redistribute_connected_ipv4: "LOOPBACK"
+                redistribute_connected_ipv4: "LOOPBACK_BLUE"
                 peer_groups:
                     fabric:
                         interfaces: ["swp2","swp51.200","swp52.200"]
+        route_maps:
+            LOOPBACK_RED:
+                - "10 match interface red"
+            LOOPBACK_BLUE:
+                - "10 match interface blue"
 
     # exit01:
     #     interfaces:
@@ -528,12 +525,6 @@ node:
         #All L3 interfaces go in this section
             loopback:
                 ipv4: "10.0.0.21/32"
-            lo:100:
-                ipv4: "10.0.0.21/32"
-                vrf: "red"
-            lo:200:
-                ipv4: "10.0.0.21/32"
-                vrf: "blue"
             eth0:
                 #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
                 vrfmgmt: "enable"
@@ -563,36 +554,36 @@ node:
         VRF:
             red:
                 #Add ipv4 and ipv6 loopback IP addresses to the VRF
-                ipv4: "10.0.0.21/32"
+                ipv4: "10.0.100.21/32"
             blue:
-                ipv4: "10.0.0.21/32"
+                ipv4: "10.0.200.21/32"
 
         BGP:
             red:
                 asn: 64512
                 #Redistribute connected routes default is all or specify route-map name
-                redistribute_connected_ipv4: "LOOPBACK"
+                redistribute_connected_ipv4: "LOOPBACK_RED"
                 peer_groups:
                     fabric:
                         interfaces: ["swp1.100","swp2.100","swp3.100","swp4.100"]
             blue:
                 asn: 64512
                 #Redistribute connected routes default is all or specify route-map name
-                redistribute_connected_ipv4: "LOOPBACK"
+                redistribute_connected_ipv4: "LOOPBACK_BLUE"
                 peer_groups:
                     fabric:
                         interfaces: ["swp1.200","swp2.200","swp3.200","swp4.200"]
+        route_maps:
+            LOOPBACK_RED:
+                - "10 match interface red"
+            LOOPBACK_BLUE:
+                - "10 match interface blue"
     spine02:
         interfaces:
         #All L3 interfaces go in this section
             loopback:
                 ipv4: "10.0.0.22/32"
-            lo:100:
-                ipv4: "10.0.0.22/32"
-                vrf: "red"
-            lo:200:
-                ipv4: "10.0.0.22/32"
-                vrf: "blue"
+
             eth0:
                 #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
                 vrfmgmt: "enable"
@@ -622,30 +613,35 @@ node:
         VRF:
             red:
                 #Add ipv4 and ipv6 loopback IP addresses to the VRF
-                ipv4: "10.0.0.22/32"
+                ipv4: "10.0.100.22/32"
             blue:
-                ipv4: "10.0.0.22/32"
+                ipv4: "10.0.200.22/32"
 
         BGP:
             red:
                 asn: 64512
                 #Redistribute connected routes default is all or specify route-map name
-                redistribute_connected_ipv4: "LOOPBACK"
+                redistribute_connected_ipv4: "LOOPBACK_RED"
                 peer_groups:
                     fabric:
                         interfaces: ["swp1.100","swp2.100","swp3.100","swp4.100"]
             blue:
                 asn: 64512
                 #Redistribute connected routes default is all or specify route-map name
-                redistribute_connected_ipv4: "LOOPBACK"
+                redistribute_connected_ipv4: "LOOPBACK_BLUE"
                 peer_groups:
                     fabric:
                         interfaces: ["swp1.200","swp2.200","swp3.200","swp4.200"]
+        route_maps:
+            LOOPBACK_RED:
+                - "10 match interface red"
+            LOOPBACK_BLUE:
+                - "10 match interface blue"
 
     # edge01:
     #     interfaces:
     #         loopback:
-    #             ip: "10.0.1.105/32"
+    #             ip: "10.0.100.105/32"
     #     bonds:
     #         uplink:
     #             mode: "trunk"

@@ -109,6 +109,15 @@ router bgp {{ bgpvars[vrf].asn }} vrf {{ vrf }}
 {%   endfor %}
 {% endif %}
 !
+{### Configure node specific route-maps ###}
+{% if nodemaps is defined %}
+{%   for map_name in nodemaps -%}
+{%     for item in nodemaps[map_name] -%}
+{{item}}
+{%     endfor %}
+{%   endfor %}
+{% endif %}
+!
 {### Configure static routes ###}
 {% if statics is defined %}
 {%   for item in statics -%}
