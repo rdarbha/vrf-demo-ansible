@@ -27,10 +27,10 @@ node:
         interfaces:
             loopback:
                 ipv4: "10.0.0.11/32"
-            lo.100:
+            lo:100:
                 ipv4: "10.0.0.11/32"
                 vrf: "red"
-            lo.200:
+            lo:200:
                 ipv4: "10.0.0.11/32"
                 vrf: "blue"
 
@@ -151,10 +151,10 @@ node:
         interfaces:
             loopback:
                 ipv4: "10.0.0.12/32"
-            loopback.100:
+            lo:100:
                 ipv4: "10.0.0.12/32"
                 vrf: "red"
-            loopback.200:
+            lo:200:
                 ipv4: "10.0.0.12/32"
                 vrf: "blue"
 
@@ -269,10 +269,10 @@ node:
         interfaces:
             loopback:
                 ipv4: "10.0.0.13/32"
-            loopback.100:
+            lo:100:
                 ipv4: "10.0.0.13/32"
                 vrf: "red"
-            loopback.200:
+            lo:200:
                 ipv4: "10.0.0.13/32"
                 vrf: "blue"
 
@@ -318,10 +318,10 @@ node:
         interfaces:
             loopback:
                 ipv4: "10.0.0.14/32"
-            loopback.100:
+            lo:100:
                 ipv4: "10.0.0.14/32"
                 vrf: "red"
-            loopback.200:
+            lo:200:
                 ipv4: "10.0.0.14/32"
                 vrf: "blue"
 
@@ -527,9 +527,9 @@ node:
         interfaces:
         #All L3 interfaces go in this section
             loopback:
-            loopback.100:
+            lo:100:
                 ipv4: "10.0.0.21/32"
-            loopback.200:
+            lo:200:
                 ipv4: "10.0.0.21/32"
             eth0:
                 #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
@@ -583,9 +583,9 @@ node:
         interfaces:
         #All L3 interfaces go in this section
             loopback:
-            loopback.100:
+            lo:100:
                 ipv4: "10.0.0.22/32"
-            loopback.200:
+            lo:200:
                 ipv4: "10.0.0.22/32"
             eth0:
                 #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
