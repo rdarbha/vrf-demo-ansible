@@ -527,10 +527,13 @@ node:
         interfaces:
         #All L3 interfaces go in this section
             loopback:
+                ipv4: "10.0.0.21/32"
             lo:100:
                 ipv4: "10.0.0.21/32"
+                vrf: "red"
             lo:200:
                 ipv4: "10.0.0.21/32"
+                vrf: "blue"
             eth0:
                 #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
                 vrfmgmt: "enable"
@@ -583,10 +586,13 @@ node:
         interfaces:
         #All L3 interfaces go in this section
             loopback:
+                ipv4: "10.0.0.22/32"
             lo:100:
                 ipv4: "10.0.0.22/32"
+                vrf: "red"
             lo:200:
                 ipv4: "10.0.0.22/32"
+                vrf: "blue"
             eth0:
                 #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
                 vrfmgmt: "enable"
