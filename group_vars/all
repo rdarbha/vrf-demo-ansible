@@ -87,7 +87,7 @@ node:
                 members: ["swp1"]
                 vrf: "red"
                 clagid: 1
-                mtu: 9216
+                # mtu: 9216
                 LACP_rate: "fast"
             server02:
                 bridge_access: "200"
@@ -95,7 +95,7 @@ node:
                 members: ["swp2"]
                 vrf: "blue"
                 clagid: 2
-                mtu: 9216
+                # mtu: 9216
                 LACP_rate: "fast"
 
         ### Role cumulus_interfaces ###
