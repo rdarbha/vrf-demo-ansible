@@ -690,6 +690,10 @@ node:
                 ipv4: "172.16.0.103/32"
             eth1:
             eth2:
+        asn: 65103
+        neighbors:
+            eth1:
+            eth2:
         # bonds:
         #     uplink:
         #         mode: "trunk"
@@ -719,6 +723,11 @@ node:
             eth1:
                 # ipv4: "1.1.1.1/32"
             eth2:
+        asn: 65104
+        neighbors:
+            eth1:
+            eth2:
+
         # bonds:
         #     uplink:
         #         mode: "trunk"
