@@ -17,7 +17,7 @@ global:
     route_maps:
         LOOPBACK:
             - "route-map LOOPBACK permit 100"
-            - "match interface lo"
+            - "10 match interface lo"
         LOOPBACK_RED:
             - "route-map LOOPBACK_RED permit 100"
             - "10 match interface red"
