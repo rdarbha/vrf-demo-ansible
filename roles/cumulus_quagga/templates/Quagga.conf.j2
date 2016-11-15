@@ -96,26 +96,25 @@ router bgp {{ bgpvars[vrf].asn }} vrf {{ vrf }}
 {#######  END BGP configuration #######}
 !
 !
-{### Configure global prefix lists ###}
-{% if globallists is defined %}
-{%   for list_name in globallists -%}
-{### Check if a node specific list exisits if so skip ###}
-{%     if nodelists is defined and nodelists.list_name is defined %}
-{%     else %}
-{%       for item in globallists[list_name] -%}
-{% set ip, rule = item.split(' ',1) %}
-{{ip}} prefix-list {{list_name}} seq {{rule}}
-{%       endfor %}
-{%     endif %}
-{%   endfor %}
-{% endif %}
-!
 {### Configure node specific route-maps ###}
 {% if nodemaps is defined %}
 {%   for map_name in nodemaps -%}
 {%     for item in nodemaps[map_name] -%}
 {{item}}
 {%     endfor %}
+{%   endfor %}
+{% endif %}
+!
+{### Configure global route-maps ###}
+{% if globalmaps is defined %}
+{%   for map_name in globalmaps -%}
+{### Check if a node specific route_map exisits if so skip ###}
+{%     if nodemaps is defined and nodemaps.map_name is defined %}
+{%     else %}
+{%       for item in globalmaps[map_name] -%}
+{{item}}
+{%       endfor %}
+{%     endif %}
 {%   endfor %}
 {% endif %}
 !
