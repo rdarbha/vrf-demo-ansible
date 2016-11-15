@@ -307,11 +307,6 @@ node:
                 peer_groups:
                     fabric:
                         interfaces: ["swp2","swp51.200","swp52.200"]
-        route_maps:
-            LOOPBACK_RED:
-                - "10 match interface red"
-            LOOPBACK_BLUE:
-                - "10 match interface blue"
 
     leaf04:
         interfaces:
@@ -356,11 +351,6 @@ node:
                 peer_groups:
                     fabric:
                         interfaces: ["swp2","swp51.200","swp52.200"]
-        route_maps:
-            LOOPBACK_RED:
-                - "10 match interface red"
-            LOOPBACK_BLUE:
-                - "10 match interface blue"
 
     # exit01:
     #     interfaces:
@@ -573,11 +563,7 @@ node:
                 peer_groups:
                     fabric:
                         interfaces: ["swp1.200","swp2.200","swp3.200","swp4.200"]
-        route_maps:
-            LOOPBACK_RED:
-                - "10 match interface red"
-            LOOPBACK_BLUE:
-                - "10 match interface blue"
+
     spine02:
         interfaces:
         #All L3 interfaces go in this section
@@ -632,11 +618,6 @@ node:
                 peer_groups:
                     fabric:
                         interfaces: ["swp1.200","swp2.200","swp3.200","swp4.200"]
-        route_maps:
-            LOOPBACK_RED:
-                - "10 match interface red"
-            LOOPBACK_BLUE:
-                - "10 match interface blue"
 
     # edge01:
     #     interfaces:
