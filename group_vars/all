@@ -142,11 +142,6 @@ node:
                     #Fabric connections are BGP unnumbered spine-leaf connections or ROH
                     fabric:
                         interfaces: ["server02","swp51.200","swp52.200"]
-        route_maps:
-            LOOPBACK_RED:
-                - "10 match interface red"
-            LOOPBACK_BLUE:
-                - "10 match interface blue"
 
     leaf02:
         interfaces:
@@ -259,11 +254,6 @@ node:
                     #Fabric connections are BGP unnumbered spine-leaf connections or ROH
                     fabric:
                         interfaces: ["swp51.200","swp52.200"]
-        route_maps:
-            LOOPBACK_RED:
-                - "10 match interface red"
-            LOOPBACK_BLUE:
-                - "10 match interface blue"
 
     leaf03:
         interfaces:
