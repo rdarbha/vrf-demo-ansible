@@ -31,7 +31,7 @@ node:
         #Interface specific configurations for L1/L2/L3 paramenters
         interfaces:
             loopback:
-                ipv4: "10.0.0.11/32"
+                ipv4: "172.16.0.11/32"
 
             eth0:
                 #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
@@ -43,14 +43,11 @@ node:
                 vrf: "red"
             swp51.200:
                 vrf: "blue"
-                #ipv4: "10.0.100.11/24"
-                #vrf: "red"
             swp52:
             swp52.100:
                 vrf: "red"
             swp52.200:
                 vrf: "blue"
-
             swp1:
             swp2:
 
@@ -68,13 +65,13 @@ node:
             VLAN100:
                 ipv4: "10.0.100.1/24"
                 alias: "VM 100 Network"
-                vrr_ipv4: "10.0.100.10/24"
+                vrr_ipv4: "10.0.100.3/24"
                 vrr_mac: "44:39:39:FF:00:10"
                 vrf: "red"
             VLAN200:
                 ipv4: "10.0.200.1/24"
                 alias: "VM 200 Network"
-                vrr_ipv4: "10.0.200.10/24"
+                vrr_ipv4: "10.0.200.3/24"
                 vrr_mac: "44:39:39:FF:00:20"
                 vrf: "blue"
 
@@ -114,9 +111,9 @@ node:
         VRF:
             red:
                 #Add ipv4 and ipv6 loopback IP addresses to the VRF
-                ipv4: "10.0.100.11/32"
+                ipv4: "172.16.100.11/32"
             blue:
-                ipv4: "10.0.200.11/32"
+                ipv4: "172.16.200.11/32"
 
         ### Role cumulus_quagga ###
         BGP:
@@ -131,7 +128,7 @@ node:
                 peer_groups:
                     #Fabric connections are BGP unnumbered spine-leaf connections or ROH
                     fabric:
-                        interfaces: ["server01","swp51.100","swp52.100"]
+                        interfaces: ["swp51.100","swp52.100"]
 
             blue:
                 asn: 64601
@@ -144,12 +141,12 @@ node:
                 peer_groups:
                     #Fabric connections are BGP unnumbered spine-leaf connections or ROH
                     fabric:
-                        interfaces: ["server02","swp51.200","swp52.200"]
+                        interfaces: ["swp51.200","swp52.200"]
 
     leaf02:
         interfaces:
             loopback:
-                ipv4: "10.0.0.12/32"
+                ipv4: "172.16.0.12/32"
 
             eth0:
                 vrfmgmt: "enable"
@@ -160,8 +157,6 @@ node:
                 vrf: "red"
             swp51.200:
                 vrf: "blue"
-                #ipv4: "10.0.100.11/24"
-                #vrf: "red"
             swp52:
             swp52.100:
                 vrf: "red"
@@ -178,20 +173,20 @@ node:
             #Ageing time for learned MACs 300s(default), really why are you changing this?
             #mstpctl-ageing: "300"
             #List of L2 ports on the switch, ports will default to L2 trunks in this list
-            #unless a default_vids list or bridge_access is configured under the interface
+            #unless a default_vids list or bridge_access is configurationsigured under the interface
             members: ["server01","server02"]
 
         SVI:
             VLAN100:
                 ipv4: "10.0.100.2/24"
                 alias: "VM 100 Network"
-                vrr_ipv4: "10.0.100.10/24"
+                vrr_ipv4: "10.0.100.3/24"
                 vrr_mac: "44:39:39:FF:00:10"
                 vrf: "red"
             VLAN200:
                 ipv4: "10.0.200.2/24"
                 alias: "VM 200 Network"
-                vrr_ipv4: "10.0.200.10/24"
+                vrr_ipv4: "10.0.200.3/24"
                 vrr_mac: "44:39:39:FF:00:20"
                 vrf: "blue"
 
@@ -227,9 +222,9 @@ node:
         VRF:
             red:
                 #Add ipv4 and ipv6 loopback IP addresses to the VRF
-                ipv4: "10.0.100.12/32"
+                ipv4: "172.16.100.12/32"
             blue:
-                ipv4: "10.0.200.12/32"
+                ipv4: "172.16.200.12/32"
 
         BGP:
             red:
@@ -261,7 +256,7 @@ node:
     leaf03:
         interfaces:
             loopback:
-                ipv4: "10.0.0.13/32"
+                ipv4: "172.16.0.13/32"
 
             swp1:
             swp2:
@@ -281,9 +276,9 @@ node:
         VRF:
             red:
                 #Add ipv4 and ipv6 loopback IP addresses to the VRF
-                ipv4: "10.0.100.13/32"
+                ipv4: "172.16.100.13/32"
             blue:
-                ipv4: "10.0.200.13/32"
+                ipv4: "172.16.200.13/32"
 
         BGP:
             red:
@@ -304,7 +299,7 @@ node:
     leaf04:
         interfaces:
             loopback:
-                ipv4: "10.0.0.14/32"
+                ipv4: "172.16.0.14/32"
 
             swp1:
             swp2:
@@ -325,9 +320,9 @@ node:
         VRF:
             red:
                 #Add ipv4 and ipv6 loopback IP addresses to the VRF
-                ipv4: "10.0.100.14/32"
+                ipv4: "172.16.100.14/32"
             blue:
-                ipv4: "10.0.200.14/32"
+                ipv4: "172.16.200.14/32"
 
         BGP:
             red:
@@ -507,7 +502,7 @@ node:
         interfaces:
         #All L3 interfaces go in this section
             loopback:
-                ipv4: "10.0.0.21/32"
+                ipv4: "172.16.0.21/32"
             eth0:
                 #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
                 vrfmgmt: "enable"
@@ -537,9 +532,9 @@ node:
         VRF:
             red:
                 #Add ipv4 and ipv6 loopback IP addresses to the VRF
-                ipv4: "10.0.100.21/32"
+                ipv4: "172.16.100.21/32"
             blue:
-                ipv4: "10.0.200.21/32"
+                ipv4: "172.16.200.21/32"
 
         BGP:
             red:
@@ -561,7 +556,7 @@ node:
         interfaces:
         #All L3 interfaces go in this section
             loopback:
-                ipv4: "10.0.0.22/32"
+                ipv4: "172.16.0.22/32"
 
             eth0:
                 #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
@@ -592,9 +587,9 @@ node:
         VRF:
             red:
                 #Add ipv4 and ipv6 loopback IP addresses to the VRF
-                ipv4: "10.0.100.22/32"
+                ipv4: "172.16.100.22/32"
             blue:
-                ipv4: "10.0.200.22/32"
+                ipv4: "172.16.200.22/32"
 
         BGP:
             red:
@@ -641,21 +636,22 @@ node:
     server01:
         interfaces:
             loopback:
-                ipv4: "10.0.0.101/32"
+                ipv4: "172.16.0.101/32"
         bonds:
             uplink:
                 #mode: "trunk"
                 members: ["eth1","eth2"]
+                ipv4: "10.0.100.101/24"
         #VLANS:
             #default_vids: "10 20 30 40 50"
             #default_pvid: "1"
             #members: ["uplink"]
 
-        SVI:
-            VLAN100:
-                ipv4: "10.0.100.101/24"
-            VLAN200:
-                ipv4: "10.0.200.101/24"
+        # SVI:
+        #     VLAN100:
+        #         ipv4: "10.0.100.101/24"
+        #     VLAN200:
+        #         ipv4: "10.0.200.101/24"
         #     VLAN30:
         #         ipv4: "192.168.30.101/24"
         #     VLAN40:
@@ -667,21 +663,22 @@ node:
     server02:
         interfaces:
             loopback:
-                ipv4: "10.0.0.102/32"
+                ipv4: "172.16.0.102/32"
         bonds:
             uplink:
                 # mode: "trunk"
                 members: ["eth1","eth2"]
-        VLANS:
-            default_vids: "100 200 30 40 50"
+                ipv4: "10.0.200.102/23"
+        # VLANS:
+        #     default_vids: "100 200 30 40 50"
         #     default_pvid: "1"
         #     members: ["uplink"]
 
-        SVI:
-            VLAN100:
-                ipv4: "10.0.100.102/24"
-            VLAN200:
-                ipv4: "10.0.200.102/24"
+        # SVI:
+        #     VLAN100:
+        #         ipv4: "10.0.100.102/24"
+        #     VLAN200:
+        #         ipv4: "10.0.200.102/24"
         #     VLAN30:
         #       ipv4: "192.168.30.102/24"
         #     VLAN40:
@@ -692,7 +689,7 @@ node:
     server03:
         interfaces:
             loopback:
-                ipv4: "10.0.0.103/32"
+                ipv4: "172.16.0.103/32"
             eth1:
             eth2:
         # bonds:
@@ -720,7 +717,7 @@ node:
     server04:
         interfaces:
             loopback:
-                ipv4: "10.0.0.104/32"
+                ipv4: "172.16.0.104/32"
             eth1:
                 # ipv4: "1.1.1.1/32"
             eth2:
