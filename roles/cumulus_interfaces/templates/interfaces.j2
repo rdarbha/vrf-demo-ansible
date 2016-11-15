@@ -345,6 +345,9 @@ iface bridge.{{vlan_int[4:]}}
   address-virtual {{svi[vlan_int].vrr_mac}} {{svi[vlan_int].vrr_ipv6}}
 {%       endif -%}
 {%     endif -%}
+{%     if svi[vlan_int].vrf is defined %}
+  vrf {{svi[vlan_int].vrf}}
+{%     endif %}
 {%   endfor %}
 {% endif -%}
 

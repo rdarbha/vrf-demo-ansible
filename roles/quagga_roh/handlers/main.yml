@@ -1,0 +1,5 @@
+- name: reload sysctl files
+  command: 'sysctl --system'
+
+- name: restart quagga
+  service: name=quagga state=restarted

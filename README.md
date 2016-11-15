@@ -3,20 +3,19 @@ Demo L3 VRF-lite Tenant Isolation on Cumulus Linux
 ========================
 This Github repository contains the configuration files necessary for setting up a VRF-lite infrastructure using Cumulus Linux and Quagga on the [Reference Topology](http://github.com/cumulusnetworks/cldemo-vagrant).  Only Server01->Server04, Leaf01->Leaf04 and Spine01->Spine02 are used.
 
-Ansible is the mechanism which is used to deploy the VRF configuration onto all components.
-
-
+Ansible is the mechanism which is used to deploy the VRF configuration onto all components. As a result, this demo depends on [cldemo-vagrant](https://github.com/CumulusNetworks/cldemo-vagrant) to run.
 
 Quickstart: Run the demo
 ------------------------
-    git clone https://github.com/rdarbha/vrf-demo-ansible
-    cd vrf-demo-ansible
-    # Launch oob infrastructure prior
+    git clone https://github.com/CumulusNetworks/cldemo-vagrant
+    cd cldemo-vagrant
     vagrant up oob-mgmt-server oob-mgmt-switch
-    # launch rest of infrastructure to pull DHCP information
     vagrant up leaf01 leaf02 leaf03 leaf04 spine01 spine02 server01 server02 server03 server04
     vagrant ssh oob-mgmt-server
     sudo su - cumulus
+    git clone https://github.com/rdarbha/vrf-demo-ansible
+    cd vrf-demo-ansible
+    ansible-playbook deploy_network.yml
     ssh leaf01
     sudo vtysh -c "show ip route vrf all"
 

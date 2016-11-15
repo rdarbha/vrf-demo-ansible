@@ -15,11 +15,14 @@ spine02
 [oob]
 oob-mgmt-switch
 
-[servers]
+[l2_servers]
 server01
 server02
+
+[l3_servers]
 server03
 server04
+
 edge01
 
 [edge]

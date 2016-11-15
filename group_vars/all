@@ -48,8 +48,6 @@ node:
                 vrf: "red"
             swp52.200:
                 vrf: "blue"
-            swp1:
-            swp2:
 
         VLANS:
             default_vids: "100 200"

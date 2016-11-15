@@ -32,10 +32,17 @@
 #    - ifupdown2
 
 
-- hosts: servers
+- hosts: l2_servers
   user: cumulus
   become: yes
   become_method: sudo
   roles:
     - ifupdown
 
+- hosts: l3_servers
+  user: cumulus
+  become: yes
+  become_method: sudo
+  roles:
+    - quagga_roh
+    - ifupdown
