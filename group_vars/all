@@ -256,6 +256,11 @@ node:
             loopback:
                 ipv4: "172.16.0.13/32"
 
+            eth0:
+                #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
+                vrfmgmt: "enable"
+                dhcp: "enable"
+
             swp1:
             swp2:
             swp51:
@@ -299,6 +304,11 @@ node:
             loopback:
                 ipv4: "172.16.0.14/32"
 
+            eth0:
+                #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
+                vrfmgmt: "enable"
+                dhcp: "enable"
+
             swp1:
             swp2:
             swp51:
@@ -338,163 +348,97 @@ node:
                     fabric:
                         interfaces: ["swp2","swp51.200","swp52.200"]
 
-    # exit01:
-    #     interfaces:
-    #         loopback:
-    #             ipv4: "10.0.0.12/32"
-    #         eth0:
-    #             #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
-    #             vrfmgmt: "enable"
-    #             dhcp: "enable"
-    #         swp5:
-    #             post_up:
-    #               - "ip link set swp5 promisc on"
+    exit01:
+        interfaces:
+            loopback:
+                ipv4: "172.16.0.31/32"
 
-    #     ### Role cumulus_interfaces ###
-    #     bonds:
-    #         server01:
-    #             vids: "2361 2362 2363"
-    #             pvid: "1"
-    #             mstpctl-portadminedge: "enable"
-    #             bpdugaurd: "enable"
-    #             alias: "server01 MLAG connection"
-    #             members: ["swp5"]
-    #             clagid: 1
-    #             mtu: 9216
-    #             LACP_rate: "fast"
-    #             LACP_bypass: "enable"
-    #         server02:
-    #             vids: "2361 2362 2363"
-    #             pvid: "1"
-    #             mstpctl-portadminedge: "enable"
-    #             bpdugaurd: "enable"
-    #             alias: "server02 MLAG connection"
-    #             members: ["swp8"]
-    #             clagid: 2
-    #             mtu: 9216
-    #             LACP_rate: "fast"
-    #             LACP_bypass: "enable"
-    #         server03:
-    #             vids: "2361 2362 2363"
-    #             pvid: "1"
-    #             mstpctl-portadminedge: "enable"
-    #             bpdugaurd: "enable"
-    #             alias: "server03 MLAG connection"
-    #             members: ["swp6"]
-    #             clagid: 3
-    #             mtu: 9216
-    #             LACP_rate: "fast"
-    #             LACP_bypass: "enable"
-    #         server04:
-    #             vids: "2361 2362 2363"
-    #             pvid: "1"
-    #             mstpctl-portadminedge: "enable"
-    #             bpdugaurd: "enable"
-    #             alias: "server04 MLAG connection"
-    #             members: ["swp7"]
-    #             clagid: 4
-    #             mtu: 9216
-    #             LACP_rate: "fast"
-    #             LACP_bypass: "enable"
+            eth0:
+                #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
+                vrfmgmt: "enable"
+                dhcp: "enable"
 
-    #     ### Role cumulus_interfaces ###
-    #     #Bridge section assumes VLAN aware Linux bridge.  vids=VLANs pvid=native VLAN
-    #     VLANS:
-    #         default_vids: "102 152 236 301 304 305 600-699 721 800 1001 2361 2362 2363 2365 2391 3000 3002 3003 3004 3005"
-    #         default_pvid: "1"
-    #         STP_priority: "8192"
-    #         members: ["server01","server02","server03","server04","netapp01link","netapp02link","swp4"]
+            swp51:
+            swp51.100:
+                vrf: "red"
+            swp51.200:
+                vrf: "blue"
+                #ipv4: "10.0.100.11/24"
+                #vrf: "red"
+            swp52:
+            swp52.100:
+                vrf: "red"
+            swp52.200:
+                vrf: "blue"
 
-    #     ### Role cumulus_interfaces ###
-    #     SVI:
-    #         VLAN2361:
-    #             ipv4: "10.0.236.2/24"
+        VRF:
+            red:
+                #Add ipv4 and ipv6 loopback IP addresses to the VRF
+                ipv4: "172.16.100.31/32"
+            blue:
+                ipv4: "172.16.200.31/32"
+
+        BGP:
+            red:
+                asn: 64604
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK_RED"
+                peer_groups:
+                    fabric:
+                        interfaces: ["swp1","swp51.100","swp52.100"]
+            blue:
+                asn: 64604
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK_BLUE"
+                peer_groups:
+                    fabric:
+                        interfaces: ["swp2","swp51.200","swp52.200"]
 
 
-    #     ### Role cumulus_interfaces ###
-    #     MLAG:
-    #         peerlink_name: "peerlink"
-    #         peerlink_sub_int: "4094"
-    #         members: ["swp49","swp51"]
-    #         sysmac: "44:39:39:FF:40:94"
-    #         mtu: 9216
-    #         peerlink_ip: "169.254.255.2"
-    #         peerlink_peer_ip: "169.254.255.1"
-    #         #Using ansible facts to get the ipv4 address of eth0 on the peer listed
-    #         backup_peer: "exit02"
-    #         description: "torsw01-torsw02 MLAG peerlink"
+    exit02:
+        interfaces:
+            loopback:
+                ipv4: "172.16.0.32/32"
 
-    # exit02:
+            eth0:
+                #Put eth0 and mgmt services NTP, SNMP, clag backup-ip into VRF mgmt
+                vrfmgmt: "enable"
+                dhcp: "enable"
 
-    #     interfaces:
-    #     #All L3 interfaces go in this section
-    #         loopback:
-    #             ipv4: "10.0.0.16/32"
-    #         swp44:
-    #             ipv4: "10.50.2.2/30"
-    #             alias: "Internet BGP connection"
+            swp51:
+            swp51.100:
+                vrf: "red"
+            swp51.200:
+                vrf: "blue"
+                #ipv4: "10.0.100.11/24"
+                #vrf: "red"
+            swp52:
+            swp52.100:
+                vrf: "red"
+            swp52.200:
+                vrf: "blue"
+        VRF:
+            red:
+                #Add ipv4 and ipv6 loopback IP addresses to the VRF
+                ipv4: "172.16.100.32/32"
+            blue:
+                ipv4: "172.16.200.32/32"
 
-    #     bonds:
-    #         edge01:
-    #             members: ["swp1"]
-    #             clagid: 1
-    #             mtu: 9216
-
-    #     VLANS:
-    #         default_vids: "10 20 30 40 50 100-110"
-    #         default_pvid: "1"
-    #         STP_priority: "8192"
-    #         members: ["edge01","regex vni.*"]
-    #     #MLAG:
-    #     #    peerlink_name: "peerlink"
-    #     #    peerlink_sub_int: "4092"
-    #     #    members: ["swp49","swp50"]
-    #     #    sysmac: "44:39:39:FF:40:92"
-    #     #    mtu: 9216
-    #     #    peerlink_ip: "169.254.255.2"
-    #     #    peerlink_peer_ip: "169.254.255.1"
-    #     #    backup_peer: "exit01"
-
-    #     ### Role cumulus_lnv ###
-    #     LNV:
-    #         registration_node:
-    #             svcnode: "10.0.0.100"
-    #             vxlan_anycast_ip: "10.0.0.156"
-
-    #    ### Role cumulus_interfaces ###
-    #     VXLAN:
-    #         LNV_VNI_list: ["10","20","30","40","50"]
-
-    #     BGP:
-    #         asn: 64702
-    #         #Redistribute connected routes default is all or specify route-map name
-    #         redistribute_connected_ipv4: "LOOPBACK"
-    #         peer_groups:
-    #             fabric:
-    #                 interfaces: ["swp51","swp52"]
-
-    #             internet_peers:
-    #                 remote_as: "external"
-    #                 peers: ["10.50.2.1"]
-    #                 prefix_list_in: "external_in"
-    #                 prefix_list_out: "rack_networks"
-    #                 description: "Internet networks"
-    #                 address_family_ipv4: "enable"
-    #                 address_family_ipv6: "enable"
-
-    #     prefix_lists:
-    #        external_in:
-    #            - "ip 10 permit 0.0.0.0/0 le 32"
-    #            - "ip 100 deny any"
-    #        rack_networks:
-    #            - "ip 10 permit 100.100.10.0/24"
-    #            - "ip 20 permit 100.100.20.0/24"
-    #            - "ip 30 permit 100.100.30.0/24"
-    #            - "ip 40 permit 100.100.40.0/24"
-    #            - "ip 50 permit 100.100.50.0/24"
-    #            - "ip 1000 deny any"
-
-
+        BGP:
+            red:
+                asn: 64604
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK_RED"
+                peer_groups:
+                    fabric:
+                        interfaces: ["swp1","swp51.100","swp52.100"]
+            blue:
+                asn: 64604
+                #Redistribute connected routes default is all or specify route-map name
+                redistribute_connected_ipv4: "LOOPBACK_BLUE"
+                peer_groups:
+                    fabric:
+                        interfaces: ["swp2","swp51.200","swp52.200"]
 
     spine01:
         interfaces:
@@ -525,6 +469,16 @@ node:
             swp4.100:
                 vrf: "red"
             swp4.200:
+                vrf: "blue"
+            swp29:
+            swp29.100:
+                vrf: "red"
+            swp29.100:
+                vrf: "blue"
+            swp30:
+            swp30.100:
+                vrf: "red"
+            swp30.100:
                 vrf: "blue"
 
         VRF:
