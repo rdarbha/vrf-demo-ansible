@@ -1,0 +1,61 @@
+# This is the redis setup specific to bgpclos topology
+# Install and configure redis with sentinel
+---
+- hosts: localhost
+  # vars_files:
+  #   - properties.yml
+  tasks:
+     - name: Install redis server
+       apt: name=redis-server state=installed
+
+     - name: Bind to local address
+       lineinfile: dest=/etc/redis/redis.conf regexp='bind 127.0.0.1' line='bind 127.0.0.1 {{ anycast_ip_redis }}' backup=yes
+
+     - name: Restart redis server
+       service: name=redis-server state=restarted
+
+     - name: Wipe out any redis state
+       command: redis-cli flushall
+
+     - name: Install Cumulus repos for installing netq
+       apt_repository: repo="{{ item }}" state=present update_cache=yes
+       with_items:
+         - deb http://repo3.cumulusnetworks.com/repo CumulusLinux-3-early-access cumulus
+         - deb http://repo3.cumulusnetworks.com/repo CumulusLinux-3 cumulus upstream
+         - deb http://repo3.cumulusnetworks.com/repo CumulusLinux-3-updates cumulus upstream
+
+     - name: Install netq on OOB server
+       apt: name="python-netq" state=installed allow_unauthenticated=yes
+
+     - name: Configure the agent with the server IP to push
+       command: netq add server {{ anycast_ip_redis }}
+
+- hosts: '!server*'
+  vars_files:
+    - properties.yml
+  tasks:
+     - name: Add EA repos for packages
+       apt_repository: repo="deb http://repo3.cumulusnetworks.com/repo CumulusLinux-3-early-access cumulus" state=present update_cache=yes
+
+     - name: Install agent/ui code
+       apt: name={{ item }} state=installed
+       with_items:
+         - python-network-docopt
+         - python-netq
+
+     - name: copy over new custom deb
+       copy: src=packages/netq.deb dest=/root/netq.deb
+
+     - name: Install Quagga
+       apt: deb=/tmp/ubuntu1604/quagga_0.99.23.1-1+cl3u2_xenial_amd64.deb
+
+     - name: Configure the agent with the server IP to push
+       command: netq add server {{ anycast_ip_redis }}
+
+     - name: Configure the agent to start
+       command: netq agent restart
+
+     - name: Check that the agent is running
+       command: netq agent status
+       register: status
+       failed_when: "'Stopped.' in status.stdout"
