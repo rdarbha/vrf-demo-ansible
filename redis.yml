@@ -4,6 +4,9 @@
 - hosts: localhost
   # vars_files:
   #   - properties.yml
+  user: cumulus
+  become: yes
+  become_method: sudo
   tasks:
      - name: Install redis server
        apt: name=redis-server state=installed
@@ -33,6 +36,9 @@
 - hosts: '!server*'
   # vars_files:
   #   - properties.yml
+  user: cumulus
+  become: yes
+  become_method: sudo
   tasks:
      - name: Add EA repos for packages
        apt_repository: repo="deb http://repo3.cumulusnetworks.com/repo CumulusLinux-3-early-access cumulus" state=present update_cache=yes
