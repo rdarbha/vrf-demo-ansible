@@ -31,8 +31,8 @@
        command: netq add server {{ anycast_ip_redis }}
 
 - hosts: '!server*'
-  vars_files:
-    - properties.yml
+  # vars_files:
+  #   - properties.yml
   tasks:
      - name: Add EA repos for packages
        apt_repository: repo="deb http://repo3.cumulusnetworks.com/repo CumulusLinux-3-early-access cumulus" state=present update_cache=yes
