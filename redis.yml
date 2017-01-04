@@ -49,11 +49,11 @@
          - python-network-docopt
          - python-netq
 
-     - name: copy over new custom deb
-       copy: src=packages/netq.deb dest=/root/netq.deb
+     - name: copy over new custom netq deb
+       copy: src=packages/python-netq-vrf.deb dest=/root/netq.deb
 
      - name: Install Quagga
-       apt: deb=/tmp/ubuntu1604/quagga_0.99.23.1-1+cl3u2_xenial_amd64.deb
+       apt: deb=/root/netq.deb
 
      - name: Configure the agent with the server IP to push
        command: netq add server {{ anycast_ip_redis }}
