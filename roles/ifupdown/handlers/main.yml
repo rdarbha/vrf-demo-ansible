@@ -7,3 +7,4 @@
 
 - name: reboot server
   command: reboot
+  ignore_errors: yes
