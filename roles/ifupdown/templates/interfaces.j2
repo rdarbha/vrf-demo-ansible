@@ -55,7 +55,7 @@ iface {{mem_int}} inet manual
 
 
 {### Create the actual bond interface ###}
-{% if bond[ipv4] is defined %}
+{% if bonds[bond].ipv4 is defined %}
 auto {{bond}}
 iface {{bond}} inet static
 {% else %}
@@ -63,8 +63,8 @@ auto {{bond}}
 iface {{bond}} inet manual
 {% endif %}
     #bond-slaves {{bonds[bond].members | join(" ")}}
-    {% if bond[ipv4] is defined %}
-    address {{ bond[ipv4] }}
+    {% if bonds[bond].ipv4 is defined %}
+    address {{ bonds[bond].ipv4 }}
     {% endif %}
     bond-slaves none
     bond-mode 802.3ad
