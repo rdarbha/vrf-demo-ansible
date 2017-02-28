@@ -44,5 +44,5 @@
   become: yes
   become_method: sudo
   roles:
-    - quagga_roh
     - ifupdown
+    - quagga_roh
