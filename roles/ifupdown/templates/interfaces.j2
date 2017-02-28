@@ -46,11 +46,13 @@ iface {{interface}} inet manual
 {% for mem_int in bonds[bond].members -%}
 auto {{mem_int}}
 iface {{mem_int}} inet manual
+    {% if mem_int.ipv4 is defind %}
     address {{ mem_int.ipv4 }}
+    {% endif %}
     bond-master {{bond}}
-{% if bonds[bond].mtu is defined %}
-  mtu {{ bonds[bond].mtu }}
-{% endif %}
+    {% if bonds[bond].mtu is defined %}
+    mtu {{ bonds[bond].mtu }}
+    {% endif %}
 {% endfor %}
 
 
