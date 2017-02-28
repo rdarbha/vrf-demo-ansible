@@ -25,9 +25,6 @@
 - name: start quagga
   service: name=quagga state=started
 
-- name: configure Interfaces
-
-
 - name: Force Interfaces Down
   command: ifdown {{item}}
   with_items:
