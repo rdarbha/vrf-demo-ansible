@@ -6,7 +6,7 @@ anycast_ip_redis: "192.168.0.254"
 global:
 
     #Save a local copy of all of the templates rendered on the remote switch
-    save_local: "enable"
+    save_local: "disable"
 
     ntp:
         #List of NTP servers 0.cumulusnetworks.pool.ntp.org iburst ([0-3]defaults)
