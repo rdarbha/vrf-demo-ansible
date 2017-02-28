@@ -276,7 +276,9 @@ node:
                 dhcp: "enable"
 
             swp1:
+                vrf: "red"
             swp2:
+                vrf: "blue"
             swp51:
             swp51.100:
                 vrf: "red"
@@ -332,7 +334,9 @@ node:
                 dhcp: "enable"
 
             swp1:
+                vrf: "red"
             swp2:
+                vrf: "blue"
             swp51:
             swp51.100:
                 vrf: "red"
