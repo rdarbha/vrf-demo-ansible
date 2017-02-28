@@ -519,12 +519,12 @@ node:
             swp29:
             swp29.100:
                 vrf: "red"
-            swp29.100:
+            swp29.200:
                 vrf: "blue"
             swp30:
             swp30.100:
                 vrf: "red"
-            swp30.100:
+            swp30.200:
                 vrf: "blue"
 
         VRF:
@@ -592,12 +592,12 @@ node:
             swp29:
             swp29.100:
                 vrf: "red"
-            swp29.100:
+            swp29.200:
                 vrf: "blue"
             swp30:
             swp30.100:
                 vrf: "red"
-            swp30.100:
+            swp30.200:
                 vrf: "blue"
 
         VRF:
