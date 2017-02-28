@@ -5,3 +5,4 @@
 # marked with the auto keyword.
 - name: reload networking
   command: ifreload -a
+  ignore_errors: yes
