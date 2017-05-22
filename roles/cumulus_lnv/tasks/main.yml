@@ -4,17 +4,20 @@
   template: src=vxsnd.conf.j2 dest=/etc/vxsnd.conf
   notify:
     - enable and restart vxsnd
-  when: (node[ansible_hostname].LNV.service_node is defined)
-  
+  when: (node[ansible_hostname].LNV is defined) and
+     (node[ansible_hostname].LNV.service_node is defined)
+
 - name: check status to see if vxsnd service is running
   shell: systemctl status vxsnd.service | grep Active
   register: vxsnd
   notify: stop and start vxsnd.service manually (1/2)
-  when: (node[ansible_hostname].LNV.service_node is defined)
+  when: (node[ansible_hostname].LNV is defined) and
+     (node[ansible_hostname].LNV.service_node is defined)
 
 - name: check status to see if vxrd is running
   shell: systemctl status vxrd.service | grep Active
   register: vxrd
   notify: stop and start vxrd.service manually (1/2)
-  when: (node[ansible_hostname].LNV.registration_node is defined)  
- 
+  when: (node[ansible_hostname].LNV is defined) and
+     (node[ansible_hostname].LNV.registration_node is defined)
+
